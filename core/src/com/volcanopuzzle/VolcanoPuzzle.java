@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.GL20;
 
 public class VolcanoPuzzle extends ApplicationAdapter {
 	
-	public VStage stage = new VStage();
+//	public VStage stage = new VStage();
+	public VStageVoronoi stage = new VStageVoronoi();
+
 	
 	@Override
 	public void create () {
