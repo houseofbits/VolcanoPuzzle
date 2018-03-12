@@ -7,12 +7,12 @@ import com.badlogic.gdx.graphics.GL20;
 public class VolcanoPuzzle extends ApplicationAdapter {
 	
 //	public VStage stage = new VStage();
-	public VStageVoronoi stage = new VStageVoronoi();
+	public VMain main = new VMain();
 
 	
 	@Override
 	public void create () {
-		stage.create();
+		main.create();
 	}
 
 	@Override
@@ -20,7 +20,7 @@ public class VolcanoPuzzle extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0.4f, 0.4f, 0.4f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		stage.render();
+		main.render();
 	}
 	
 	@Override
