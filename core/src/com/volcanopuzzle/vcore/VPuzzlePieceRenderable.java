@@ -1,4 +1,4 @@
-package com.volcanopuzzle;
+package com.volcanopuzzle.vcore;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -56,4 +56,37 @@ public class VPuzzlePieceRenderable {
 	public void dispose(){
 		modelBatch.dispose();
 	}
+	
+	/*
+
+    public BoundingBox boundingBox = new BoundingBox();
+    public Matrix4  transform = new Matrix4();
+    float[] vertices = null;
+    short[] indices = null;
+    int   vertexSize = 0;
+    
+    public void LoadMeshes(Mesh mesh, Matrix4 transform){
+
+        vertexSize = mesh.getVertexSize() / 4;
+        vertices = new float[mesh.getNumVertices() * mesh.getVertexSize() / 4];
+        mesh.transform(transform.cpy());
+        mesh.getVertices(vertices);
+        indices = new short[mesh.getNumIndices()];
+        mesh.getIndices(indices);
+    }
+
+    public boolean IntersectRay(Ray ray, Vector3 point){
+
+        if(vertices == null || vertexSize == 0)return false;
+
+        Ray r = ray.cpy();
+        r.mul(transform.cpy().inv());
+        if(Intersector.intersectRayTriangles(r, vertices, indices, vertexSize, point)) {
+            point.mul(transform);
+            return true;
+        }
+        return false;
+    }	
+	*/
+	
 }

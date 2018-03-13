@@ -1,4 +1,4 @@
-package com.volcanopuzzle;
+package com.volcanopuzzle.vstage;
 
 import java.util.Random;
 
@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.SnapshotArray;
 
-public class VStage extends InputListener {
+public class VStageSimplePuzzle extends InputListener {
 	
 	class PuzzlePiece extends Image{
 		public int positionIndexX = 0;
@@ -42,7 +42,7 @@ public class VStage extends InputListener {
 	public int		puzzleEmptyY = 0;	
 	public boolean	puzzleComplete = false; 
 	
-	public VStage(){
+	public VStageSimplePuzzle(){
 		
 
 	}

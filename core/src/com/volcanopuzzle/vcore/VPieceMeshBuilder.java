@@ -1,4 +1,4 @@
-package com.volcanopuzzle;
+package com.volcanopuzzle.vcore;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
@@ -47,22 +47,30 @@ public class VPieceMeshBuilder {
 		meshBuilder.begin(Usage.Position | Usage.TextureCoordinates);		
 		meshBuilder.part("pieceTop", GL30.GL_TRIANGLE_FAN);		
 		for(int i=0;i<shape.size; i++){
-			Vector2 p = shape.get(i);
-			idx = meshBuilder.vertex(new Vector3((p.x - posSum.x)* scale.x, piecey, (p.y - posSum.y) * scale.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
+			
+			Vector2 p = shape.get(i);			
+			Vector2 pv = p.cpy().sub(posSum).scl(scale);
+			
+			idx = meshBuilder.vertex(new Vector3(pv.x, piecey, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
 			meshBuilder.index(idx);
 		}
 		Mesh mesh1 = meshBuilder.end();
 
 		//Edge face
 		meshBuilder.begin(Usage.Position | Usage.TextureCoordinates);		
-		meshBuilder.part("pieceTop", GL30.GL_TRIANGLE_STRIP);		
-		for(int i=0;i<shape.size; i++){
-			Vector2 p = shape.get(i);
-//			idx = meshBuilder.vertex(new Vector3((p.x - posSum.x)* scale.x, piecey, (p.y - posSum.y) * scale.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
-//			meshBuilder.index(idx);
+		meshBuilder.part("pieceEdge", GL30.GL_TRIANGLE_STRIP);		
+		for(int n=0; n<=shape.size; n++){
+			
+			int i = n%shape.size;
+			Vector2 p = shape.get(i);			
+			Vector2 pv = p.cpy().sub(posSum).scl(scale);
+			
+			idx = meshBuilder.vertex(new Vector3(pv.x, piecey, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
+			meshBuilder.index(idx);			
+			idx = meshBuilder.vertex(new Vector3(pv.x, 0, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
+			meshBuilder.index(idx);			
 		}
 		Mesh mesh2 = meshBuilder.end();
-		
 		
 		ModelBuilder modelBuilder = new ModelBuilder();
 	    modelBuilder.begin();
@@ -73,7 +81,11 @@ public class VPieceMeshBuilder {
 	            new Material(ColorAttribute.createDiffuse(Color.WHITE)));
 	    		//new Material(ColorAttribute.createDiffuse(new Color((int)(Math.random() * 16777215)))));
 	    
-	    //TODO Build piece edges
+	    modelBuilder.part("pieceEdge",
+	            mesh2,
+	            GL30.GL_TRIANGLE_STRIP,
+	            new Material(ColorAttribute.createDiffuse(Color.BLACK)));
+	    		//new Material(ColorAttribute.createDiffuse(new Color((int)(Math.random() * 16777215)))));
 	    
 	    Model model = modelBuilder.end();   
 	    return model;

@@ -1,4 +1,4 @@
-package com.volcanopuzzle;
+package com.volcanopuzzle.vcore;
 
 import java.util.Random;
 

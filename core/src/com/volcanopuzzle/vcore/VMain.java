@@ -1,4 +1,6 @@
-package com.volcanopuzzle;
+package com.volcanopuzzle.vcore;
+
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL30;
@@ -12,13 +14,14 @@ import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.volcanopuzzle.vstage.VStageMain;
 
 public class VMain {
 	
 	public PerspectiveCamera camera = null;
 	public Environment environment = new Environment();
 	
-	VStageVoronoi voronoi = new VStageVoronoi();
+	VStageMain mainStage = new VStageMain(this);
 	
 	VPieceMeshBuilder meshBuilder = new VPieceMeshBuilder();
 	
@@ -27,8 +30,9 @@ public class VMain {
 	Array<VPuzzlePieceRenderable> puzzlePieces = new Array<VPuzzlePieceRenderable>();
 	
 	public void create(){
+		VStaticAssets.Init();
 		
-		voronoi.create();
+		mainStage.create();
 		
 		camera = new PerspectiveCamera(65, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.set(new Vector3(100,150,0));
@@ -48,13 +52,7 @@ public class VMain {
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.5f, 1f));
         environment.add(new DirectionalLight().set(0.9f, 0.9f, 0.5f,  -1, -0.8f, 1));		
         
-        Texture texture = new Texture(Gdx.files.internal("img1.png"));
-        
-        for(int i=0;i<voronoi.shapeGen.pieceShapes.size; i++){
-        	VPuzzlePieceRenderable renderable = meshBuilder.build(voronoi.shapeGen.pieceShapes.get(i), new Vector2(200,200));
-        	renderable.setDiffuseTexture(null, texture);	
-        	puzzlePieces.add(renderable);
-        }
+        generateNewPuzzle(15);
 	}
 	public void render(){
     	
@@ -71,7 +69,25 @@ public class VMain {
         }
         
         
-		voronoi.render();
+		mainStage.render();
 	}
-	
+	public void generateNewPuzzle(int pieces){
+		
+		puzzlePieces.clear();
+		
+		float d = (1.0f / (float)Math.sqrt((float)pieces)) * 0.5f;
+
+		mainStage.shapeGen.generate(pieces,  d);
+		
+		Random rnd = new Random();
+		int r = rnd.nextInt(7) + 1;
+		
+        Texture texture = new Texture(Gdx.files.internal("img"+r+".png"));
+        
+        for(int i=0;i<mainStage.shapeGen.pieceShapes.size; i++){
+        	VPuzzlePieceRenderable renderable = meshBuilder.build(mainStage.shapeGen.pieceShapes.get(i), new Vector2(200,200));
+        	renderable.setDiffuseTexture(null, texture);	
+        	puzzlePieces.add(renderable);
+        }
+	}
 }

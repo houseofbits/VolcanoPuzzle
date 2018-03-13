@@ -3,6 +3,7 @@ package com.volcanopuzzle;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.volcanopuzzle.vcore.VMain;
 
 public class VolcanoPuzzle extends ApplicationAdapter {
 	
