@@ -76,7 +76,7 @@ public class VStageMain extends InputListener {
 		mainStage.act(Gdx.graphics.getDeltaTime());
 		mainStage.draw();
 			
-		shapeGen.render();
+	//	shapeGen.render();
 
 	}
 	

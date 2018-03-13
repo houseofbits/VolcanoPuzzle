@@ -27,11 +27,12 @@ public class VPieceMeshBuilder {
 		
 		//TODO Uniform random distribution
 		
-		float x = (float)Math.random() * 300;
-		float z = (float)Math.random() * 300;
-		float y = (float)Math.random() * 20;
+		float x = (float)Math.random() * 200;
+		float z = (float)Math.random() * 200;
+		float y = (float)Math.random() * 10;
 		
 		renderable.translate(new Vector3(x, y, z));
+		//renderable.translate(renderable.originalPosition);
 		
 		return renderable;
 	}	
@@ -43,7 +44,7 @@ public class VPieceMeshBuilder {
 		//pos, norm, col, uv
 		short idx = 0;
 		
-		float pieceHeight = 5;//(float)(Math.random() * 20.0f);
+		float pieceHeight = 2;//(float)(Math.random() * 20.0f);
 		
 		Vector2 posSum = new Vector2();
 		for(int i=0;i<shape.size; i++){

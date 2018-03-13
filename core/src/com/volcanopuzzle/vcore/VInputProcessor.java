@@ -17,12 +17,15 @@ public class VInputProcessor implements InputProcessor, GestureListener {
 	
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button) {
+		
 		return false;
 	}
 
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
-	//	volcano.onTap(x, y, count, button);
+	
+		volcano.onTap(x, y, count, button);
+		
 		return false;
 	}
 
@@ -38,7 +41,8 @@ public class VInputProcessor implements InputProcessor, GestureListener {
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
-	//	volcano.onPan(x,y, deltaX, deltaY);
+	//	System.out.println("pan");
+	
 		return false;
 	}
 
@@ -80,16 +84,20 @@ public class VInputProcessor implements InputProcessor, GestureListener {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return false;
+		volcano.onTouchDown(screenX, screenY);
+		return true;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		volcano.onTouchUp(screenX, screenY);
 		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		
+		volcano.onDrag(screenX,screenY);
 		return false;
 	}
 
