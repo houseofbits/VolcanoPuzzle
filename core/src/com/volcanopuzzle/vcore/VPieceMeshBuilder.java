@@ -23,7 +23,15 @@ public class VPieceMeshBuilder {
 		
 		Vector2 t = shape.position.cpy().scl(scale);
 		
-		renderable.translate(new Vector3(t.x, 0, t.y));
+		renderable.originalPosition.set(t.x, 0, t.y);
+		
+		//TODO Uniform random distribution
+		
+		float x = (float)Math.random() * 300;
+		float z = (float)Math.random() * 300;
+		float y = (float)Math.random() * 20;
+		
+		renderable.translate(new Vector3(x, y, z));
 		
 		return renderable;
 	}	
@@ -32,10 +40,10 @@ public class VPieceMeshBuilder {
 		
 		MeshBuilder meshBuilder = new MeshBuilder();
 				
-		//pos, norm, col, uv		
+		//pos, norm, col, uv
 		short idx = 0;
 		
-		float piecey = (float)(Math.random() * 20.0f);
+		float pieceHeight = 5;//(float)(Math.random() * 20.0f);
 		
 		Vector2 posSum = new Vector2();
 		for(int i=0;i<shape.size; i++){
@@ -51,7 +59,7 @@ public class VPieceMeshBuilder {
 			Vector2 p = shape.get(i);			
 			Vector2 pv = p.cpy().sub(posSum).scl(scale);
 			
-			idx = meshBuilder.vertex(new Vector3(pv.x, piecey, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
+			idx = meshBuilder.vertex(new Vector3(pv.x, pieceHeight, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
 			meshBuilder.index(idx);
 		}
 		Mesh mesh1 = meshBuilder.end();
@@ -65,7 +73,7 @@ public class VPieceMeshBuilder {
 			Vector2 p = shape.get(i);			
 			Vector2 pv = p.cpy().sub(posSum).scl(scale);
 			
-			idx = meshBuilder.vertex(new Vector3(pv.x, piecey, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
+			idx = meshBuilder.vertex(new Vector3(pv.x, pieceHeight, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
 			meshBuilder.index(idx);			
 			idx = meshBuilder.vertex(new Vector3(pv.x, 0, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
 			meshBuilder.index(idx);			

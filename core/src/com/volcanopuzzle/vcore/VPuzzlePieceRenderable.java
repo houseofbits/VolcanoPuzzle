@@ -17,6 +17,8 @@ public class VPuzzlePieceRenderable {
 	protected ModelBatch modelBatch = null;
 	protected ModelInstance modelInstance = null;
 	
+	public Vector3	originalPosition = new Vector3();
+	
 	public VPuzzlePieceRenderable(Model model){
 		
         modelInstance = new ModelInstance(model);

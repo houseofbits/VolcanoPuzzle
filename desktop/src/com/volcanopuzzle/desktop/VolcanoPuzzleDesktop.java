@@ -9,6 +9,8 @@ public class VolcanoPuzzleDesktop {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		
 		config.width = 800;config.height = 600;
+		//config.width = 1920;config.height = 1080;
+		
 		config.title = "VolcanoPuzzle";
 		config.samples = 6;
 		config.depth = 24;

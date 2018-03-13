@@ -3,13 +3,14 @@ package com.volcanopuzzle.vcore;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -20,17 +21,15 @@ public class VMain {
 	
 	public PerspectiveCamera camera = null;
 	public Environment environment = new Environment();
-	
-	VStageMain mainStage = new VStageMain(this);
-	
-	VPieceMeshBuilder meshBuilder = new VPieceMeshBuilder();
-	
-	//VPuzzlePieceRenderable puzzlePiece = null;
+	public VInputProcessor inputProcessor;
+	public VStageMain mainStage = new VStageMain(this);	
+	public VPieceMeshBuilder meshBuilder = new VPieceMeshBuilder();
 	
 	Array<VPuzzlePieceRenderable> puzzlePieces = new Array<VPuzzlePieceRenderable>();
 	
 	public void create(){
 		VStaticAssets.Init();
+		inputProcessor = new VInputProcessor(this);
 		
 		mainStage.create();
 		
@@ -53,6 +52,11 @@ public class VMain {
         environment.add(new DirectionalLight().set(0.9f, 0.9f, 0.5f,  -1, -0.8f, 1));		
         
         generateNewPuzzle(15);
+        
+        CameraInputController camController = new CameraInputController(camera);        
+//        Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage, camController, inputProcessor));
+        Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage, inputProcessor));        
+        
 	}
 	public void render(){
     	

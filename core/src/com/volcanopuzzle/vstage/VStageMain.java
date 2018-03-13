@@ -31,8 +31,6 @@ public class VStageMain extends InputListener {
 		
 		shapeGen = new VVoronoiShapeGenerator();
 		shapeGen.generate(15, 0.2f);
-
-        Gdx.input.setInputProcessor(mainStage);		
 		
 //		mainStage.setDebugAll(true);
 //		mainStage.setDebugUnderMouse(true);
@@ -55,7 +53,7 @@ public class VStageMain extends InputListener {
         g.addActor(l);
         g.setName("BUTTON1");
         g.addListener(this);          
-        g.setPosition(10, 10);       
+        g.setPosition(10, 10); 
         mainStage.addActor(g);
 
     	g = new Group();
