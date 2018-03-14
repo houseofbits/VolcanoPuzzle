@@ -23,6 +23,8 @@ public class VStageMain extends InputListener {
 	
     public Group buttonsGroup = new Group();
 	
+    public int puzzleCurrentImageIndex = 0;
+    
 	public VStageMain(VMain v){
 		volcano = v;
 	}

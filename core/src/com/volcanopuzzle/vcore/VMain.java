@@ -95,6 +95,8 @@ public class VMain {
 		
         Texture texture = new Texture(Gdx.files.internal("img"+r+".png"));
         
+        mainStage.puzzleCurrentImageIndex = r;
+        
         float maxWidth=100, maxHeight=100;
         
         float imageScale = Math.min(maxWidth / texture.getWidth(), maxHeight / texture.getHeight());
@@ -114,7 +116,6 @@ public class VMain {
         }
         gameState = GameStates.PUZZLE;
         camera.setCameraState(PresetsIdentifiers.PUZZLE_VIEW);
-      //TODO Transition camera to PUZZLE VIEW
 	}
 	
 	public VPuzzlePieceRenderable getPieceAtPoint(int x, int y, Vector3 p){
