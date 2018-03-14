@@ -118,7 +118,7 @@ public class VPieceRenderableBuilder {
 	    modelBuilder.part("pieceEdge",
 	            mesh2,
 	            GL30.GL_TRIANGLE_STRIP,
-	            new Material(ColorAttribute.createDiffuse(Color.BLACK)));
+	            new Material(ColorAttribute.createDiffuse(Color.GRAY)));
 	    		//new Material(ColorAttribute.createDiffuse(new Color((int)(Math.random() * 16777215)))));
 	    
 	    Model model = modelBuilder.end();   

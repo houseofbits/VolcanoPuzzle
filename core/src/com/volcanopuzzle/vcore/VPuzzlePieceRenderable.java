@@ -1,27 +1,38 @@
 package com.volcanopuzzle.vcore;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Attribute;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Plane;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
+import com.badlogic.gdx.utils.Array;
 
 public class VPuzzlePieceRenderable {
 	
 	protected ModelBatch modelBatch = null;
-	protected ModelInstance modelInstance = null;	
+	protected ModelInstance pieceModelInstance = null;	
+	
+	protected ModelInstance shadowModelInstance = null;	
+	
 	public Vector3	originalPosition = new Vector3();
 	public Vector3	startPosition = new Vector3();
     float[] vertices = null;
@@ -34,9 +45,24 @@ public class VPuzzlePieceRenderable {
 	public boolean setTransferToInitialPosition = false;
 	float transferVelocity = 0;
 	
+	public VPuzzlePieceRenderable(VVoronoiShapeGenerator.PieceShape shape, Vector2 size){
+		
+		Model model = buildPiece(shape, size);
+
+		pieceModelInstance = new ModelInstance(model);
+        modelBatch = new ModelBatch();
+		
+		Vector2 t = shape.position.cpy().scl(size).sub(size.cpy().scl(0.5f));
+		
+		originalPosition.set(t.x, 0, t.y);
+
+        loadIntersectionMesh();
+        transferVelocity = 0;		
+	}
+	
 	public VPuzzlePieceRenderable(Model model){
 		
-        modelInstance = new ModelInstance(model);
+        pieceModelInstance = new ModelInstance(model);
         modelBatch = new ModelBatch();
         loadIntersectionMesh();
         transferVelocity = 0;
@@ -81,23 +107,23 @@ public class VPuzzlePieceRenderable {
     	}
     	
         modelBatch.begin(cam);
-        if(modelInstance != null){
-        	modelBatch.render(modelInstance, env);
+        if(pieceModelInstance != null){
+        	modelBatch.render(pieceModelInstance, env);
         }
         modelBatch.end();       
     }
     public void translate(Vector3 pos){
-        if(modelInstance != null) {
-            modelInstance.transform.idt();
-            modelInstance.transform.translate(pos);
-            modelInstance.calculateTransforms();
+        if(pieceModelInstance != null) {
+            pieceModelInstance.transform.idt();
+            pieceModelInstance.transform.translate(pos);
+            pieceModelInstance.calculateTransforms();
             getTranslation();
             //translation + piece height
             surfacePlane.set(new Vector3(0, translation.y + 5, 0), new Vector3(0,1,0));
         }
     }
     public Vector3 getTranslation(){
-    	modelInstance.transform.getTranslation(translation);
+    	pieceModelInstance.transform.getTranslation(translation);
     	return translation;
     }
     public void setDiffuseTexture(String id, Texture texture){
@@ -112,8 +138,8 @@ public class VPuzzlePieceRenderable {
     	}
     }
     public Node getNode(String id){
-    	if(id != null && id.length() > 0)return modelInstance.getNode(id, true);
-    	else return modelInstance.nodes.get(0);
+    	if(id != null && id.length() > 0)return pieceModelInstance.getNode(id, true);
+    	else return pieceModelInstance.nodes.get(0);
     }     
     //TODO Disposing of renderables
 	public void dispose(){
@@ -121,12 +147,12 @@ public class VPuzzlePieceRenderable {
 	}
 
     public void loadIntersectionMesh(){    	
-    	MeshPart mpart = modelInstance.model.meshParts.get(0);
+    	MeshPart mpart = pieceModelInstance.model.meshParts.get(0);
     	Mesh mesh = mpart.mesh;
     	
     	vertexSize = mesh.getVertexSize() / 4;
         vertices = new float[mesh.getNumVertices() * mesh.getVertexSize() / 4];
-        mesh.transform(modelInstance.transform.cpy());
+        mesh.transform(pieceModelInstance.transform.cpy());
         mesh.getVertices(vertices);    	
     	
     	if(mpart.primitiveType == GL30.GL_TRIANGLE_FAN){
@@ -153,13 +179,66 @@ public class VPuzzlePieceRenderable {
         if(vertices == null || vertexSize == 0)return false;
 
         Ray r = ray.cpy();
-        r.mul(modelInstance.transform.cpy().inv());
+        r.mul(pieceModelInstance.transform.cpy().inv());
         if(Intersector.intersectRayTriangles(r, vertices, indices, vertexSize, point)) {
-            point.mul(modelInstance.transform);
+            point.mul(pieceModelInstance.transform);
             return true;
         }
         return false;
     }	
 	
+	private Model buildPiece(VVoronoiShapeGenerator.PieceShape shape, Vector2 scale){
+		
+		MeshBuilder meshBuilder = new MeshBuilder();
+				
+		short idx = 0;
+		
+		float pieceHeight = 2;
+
+		//Top face
+		meshBuilder.begin(Usage.Position | Usage.TextureCoordinates);		
+		meshBuilder.part("pieceTop", GL30.GL_TRIANGLE_FAN);		
+		for(int i=0;i<shape.shape.size; i++){
+			
+			Vector2 p = shape.shape.get(i);			
+			Vector2 pv = p.cpy().sub(shape.position).scl(scale);
+			idx = meshBuilder.vertex(new Vector3(pv.x, pieceHeight, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
+			meshBuilder.index(idx);
+		}
+		Mesh mesh1 = meshBuilder.end();
+
+		//Edge face
+		meshBuilder.begin(Usage.Position | Usage.TextureCoordinates);		
+		meshBuilder.part("pieceEdge", GL30.GL_TRIANGLE_STRIP);		
+		for(int n=0; n<=shape.shape.size; n++){
+			
+			int i = n%shape.shape.size;
+			Vector2 p = shape.shape.get(i);			
+			Vector2 pv = p.cpy().sub(shape.position).scl(scale);
+			idx = meshBuilder.vertex(new Vector3(pv.x, pieceHeight, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
+			meshBuilder.index(idx);			
+			idx = meshBuilder.vertex(new Vector3(pv.x, 0, pv.y), new Vector3(0,1,0), new Color(), new Vector2(p.x, p.y));
+			meshBuilder.index(idx);			
+		}
+		Mesh mesh2 = meshBuilder.end();
+		
+		ModelBuilder modelBuilder = new ModelBuilder();
+	    modelBuilder.begin();
+
+	    modelBuilder.part("pieceTop",
+	            mesh1,
+	            GL30.GL_TRIANGLE_FAN,
+	            new Material(ColorAttribute.createDiffuse(Color.WHITE)));
+	    		//new Material(ColorAttribute.createDiffuse(new Color((int)(Math.random() * 16777215)))));
+	    
+	    modelBuilder.part("pieceEdge",
+	            mesh2,
+	            GL30.GL_TRIANGLE_STRIP,
+	            new Material(ColorAttribute.createDiffuse(Color.GRAY)));
+	    		//new Material(ColorAttribute.createDiffuse(new Color((int)(Math.random() * 16777215)))));
+	    
+	    Model model = modelBuilder.end();   
+	    return model;
+	}    
 	
 }

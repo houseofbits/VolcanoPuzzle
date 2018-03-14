@@ -33,7 +33,7 @@ public class VCameraPreset {
 	public Vector3 	pivotPosition = new Vector3(0,0,0);
 	public float	fov = 80.0f;
 	public float 	distance = 100.0f;	
-	public Vector2 	anglePos = new Vector2(180, 80);
+	public Vector2 	anglePos = new Vector2(180, 90);
 	public Vector2 	friction = new Vector2(0.3f, 0.3f);
 	public Vector2 	velocityMax = new Vector2(100,100);
 	public float	fovChangeMax = 20;

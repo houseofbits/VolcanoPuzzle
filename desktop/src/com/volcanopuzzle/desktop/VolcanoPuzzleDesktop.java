@@ -15,6 +15,7 @@ public class VolcanoPuzzleDesktop {
 		config.samples = 6;
 		config.depth = 24;
 		config.vSyncEnabled = true;
+		//config.fullscreen = true;
 		
 		new LwjglApplication(new VolcanoPuzzle(), config);
 	}

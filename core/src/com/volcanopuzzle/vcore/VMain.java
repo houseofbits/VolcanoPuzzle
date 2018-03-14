@@ -36,6 +36,7 @@ public class VMain {
 	public VInputProcessor inputProcessor;
 	public VStageMain mainStage = new VStageMain(this);	
 	public VPieceRenderableBuilder meshBuilder = new VPieceRenderableBuilder();
+	public VPuzzleBackgroundRenderable backgroundRenderable = null;
 	
 	Array<VPuzzlePieceRenderable> puzzlePieces = new Array<VPuzzlePieceRenderable>();
 	
@@ -55,7 +56,7 @@ public class VMain {
 //        Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage, camController, inputProcessor));
         Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage, inputProcessor.gestureDetector, inputProcessor));        
         
-        
+        backgroundRenderable = new VPuzzleBackgroundRenderable();
 	}
 	public void render(){
     	
@@ -67,6 +68,8 @@ public class VMain {
         camera.update();
         
         //VCommon.drawGrid(camera.get());
+        
+        backgroundRenderable.render(camera.get(), environment);
         
         for(int i = 0;i<puzzlePieces.size; i++){
         	puzzlePieces.get(i).render(camera.get(), environment);
@@ -102,10 +105,16 @@ public class VMain {
         float imageScale = Math.min(maxWidth / texture.getWidth(), maxHeight / texture.getHeight());
         Vector2 size = new Vector2(texture.getWidth() * imageScale, texture.getHeight() * imageScale);
         
+        
+        backgroundRenderable.setImageBackgroundSize(size.x, size.y);
+        backgroundRenderable.setDiffuseTexture(null, texture);
+        
         meshBuilder.generateDistributionPoints(mainStage.shapeGen.pieceShapes.size, size, new Vector2(180,130));
         
         for(int i=0;i<mainStage.shapeGen.pieceShapes.size; i++){
-        	VPuzzlePieceRenderable renderable = meshBuilder.build(mainStage.shapeGen.pieceShapes.get(i), size);
+        	//VPuzzlePieceRenderable renderable = meshBuilder.build(mainStage.shapeGen.pieceShapes.get(i), size);
+        	VPuzzlePieceRenderable renderable = new VPuzzlePieceRenderable(mainStage.shapeGen.pieceShapes.get(i), size);
+        			
         	renderable.setDiffuseTexture(null, texture);	
         	puzzlePieces.add(renderable);
         	

@@ -82,7 +82,7 @@ public class VStageMain extends InputListener {
 		mainStage.act(Gdx.graphics.getDeltaTime());
 		mainStage.draw();
 			
-		shapeGen.render();
+	//	shapeGen.render();
 
 	}
 	
@@ -96,11 +96,11 @@ public class VStageMain extends InputListener {
 		
         if(a.getName().compareTo("BUTTON1") == 0){
         	volcano.generateNewPuzzle(6);
-        	buttonsGroup.setVisible(false);
+        //	buttonsGroup.setVisible(false);
         }  
         if(a.getName().compareTo("BUTTON2") == 0){
         	volcano.generateNewPuzzle(20);
-        	buttonsGroup.setVisible(false);
+        //	buttonsGroup.setVisible(false);
         } 		
 	}
     public boolean touchDown (InputEvent e, float x, float y, int pointer, int button) {
