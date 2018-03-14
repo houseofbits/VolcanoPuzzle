@@ -23,6 +23,7 @@ public class VPuzzlePieceRenderable {
 	protected ModelBatch modelBatch = null;
 	protected ModelInstance modelInstance = null;	
 	public Vector3	originalPosition = new Vector3();
+	public Vector3	startPosition = new Vector3();
     float[] vertices = null;
     short[] indices = null;
     int   vertexSize = 0;
@@ -44,7 +45,7 @@ public class VPuzzlePieceRenderable {
     	Vector3 dst = translation.cpy().sub(originalPosition);
     	
     	float len = dst.len();
-    	float margin = 15;
+    	float margin = 10;
     	if(len < margin && len > 0.1f){
     		float force = 1.0f  - (len / margin);
     		float dt = Gdx.graphics.getDeltaTime();

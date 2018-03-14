@@ -1,5 +1,7 @@
 package com.volcanopuzzle.vcore;
 
+import java.util.Random;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Mesh;
@@ -13,26 +15,49 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
-public class VPieceMeshBuilder {
+public class VPieceRenderableBuilder {
 	
-	public VPuzzlePieceRenderable build(VVoronoiShapeGenerator.PieceShape shape, Vector2 scale){
+	public Array<Vector2> randomDistributedPoints = new Array<Vector2>();
+	
+	public void generateDistributionPoints(int numPoints, Vector2 innerSize, Vector2 outerSize){
 		
-		Model model = build(shape.shape, scale);
+		randomDistributedPoints.clear();
+		
+		Vector2 outerPos = outerSize.cpy().scl(0.5f).sub(outerSize);
+		Vector2 innerPos = innerSize.cpy().scl(0.5f).sub(innerSize);
+		Random rnd = new Random();
+		
+		float minDst = 450.0f / numPoints;
+		
+		while(randomDistributedPoints.size < numPoints){
+			Vector2 p = new Vector2(((float)rnd.nextFloat() * outerSize.x) + outerPos.x, ((float)rnd.nextFloat() * outerSize.y) + outerPos.y);
+			
+			if(isPointInRect(p, innerPos, innerSize))continue;
+
+			boolean tooClose = false;
+			for(int n = 0; n < randomDistributedPoints.size; n++){
+				Vector2 pn = randomDistributedPoints.get(n);
+				if(p.cpy().sub(pn).len() < minDst){
+					tooClose = true;
+					break;
+				}
+			}
+			
+			if(!tooClose)randomDistributedPoints.add(p);
+		}
+	}
+	
+	public VPuzzlePieceRenderable build(VVoronoiShapeGenerator.PieceShape shape, Vector2 size){
+		
+		Model model = build(shape.shape, size);
 		
 		VPuzzlePieceRenderable renderable = new VPuzzlePieceRenderable(model);
 		
-		Vector2 t = shape.position.cpy().scl(scale);
+		Vector2 t = shape.position.cpy().scl(size).sub(size.cpy().scl(0.5f));
 		
 		renderable.originalPosition.set(t.x, 0, t.y);
-		
-		//TODO Uniform random distribution
-		
-		float x = (float)Math.random() * 200;
-		float z = (float)Math.random() * 200;
-		float y = (float)Math.random() * 10;
-		
-		renderable.translate(new Vector3(x, y, z));
-		//renderable.translate(renderable.originalPosition);
+
+		renderable.translate(renderable.originalPosition);
 		
 		return renderable;
 	}	
@@ -99,5 +124,14 @@ public class VPieceMeshBuilder {
 	    Model model = modelBuilder.end();   
 	    return model;
 	}
-	
+	public boolean isPointInRect(Vector2 p, Vector2 rectPos, Vector2 rectSize){
+		
+		Vector2 pp = p.cpy().sub(rectPos);
+		
+		if(pp.x < 0 || pp.x > rectSize.x)return false;
+
+		if(pp.y < 0 || pp.y > rectSize.y)return false;		
+		
+		return true;
+	}
 }

@@ -25,7 +25,7 @@ public class VMain {
 	public Environment environment = new Environment();
 	public VInputProcessor inputProcessor;
 	public VStageMain mainStage = new VStageMain(this);	
-	public VPieceMeshBuilder meshBuilder = new VPieceMeshBuilder();
+	public VPieceRenderableBuilder meshBuilder = new VPieceRenderableBuilder();
 	
 	Array<VPuzzlePieceRenderable> puzzlePieces = new Array<VPuzzlePieceRenderable>();
 	
@@ -36,7 +36,7 @@ public class VMain {
 		mainStage.create();
 		
 		camera = new PerspectiveCamera(80, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.position.set(new Vector3(100,180,150));
+		camera.position.set(new Vector3(0,80,20));
 		camera.up.set(0,1,0);   		
 		camera.near = 1f;
 		camera.far = 3000;
@@ -91,10 +91,26 @@ public class VMain {
 		
         Texture texture = new Texture(Gdx.files.internal("img"+r+".png"));
         
+        float maxWidth=100, maxHeight=100;
+        
+        float imageScale = Math.min(maxWidth / texture.getWidth(), maxHeight / texture.getHeight());
+        Vector2 size = new Vector2(texture.getWidth() * imageScale, texture.getHeight() * imageScale);
+        
+        meshBuilder.generateDistributionPoints(mainStage.shapeGen.pieceShapes.size, size, new Vector2(180,130));
+        
         for(int i=0;i<mainStage.shapeGen.pieceShapes.size; i++){
-        	VPuzzlePieceRenderable renderable = meshBuilder.build(mainStage.shapeGen.pieceShapes.get(i), new Vector2(200,200));
+        	VPuzzlePieceRenderable renderable = meshBuilder.build(mainStage.shapeGen.pieceShapes.get(i), size);
         	renderable.setDiffuseTexture(null, texture);	
         	puzzlePieces.add(renderable);
+        	
+    		Vector2 prr = meshBuilder.randomDistributedPoints.get(i);
+    		
+    		renderable.startPosition.set(prr.x, (float)Math.random() * 20.0f, prr.y);
+    		
+    		//TODO Animated transfer to initial piece positions from complete puzzle
+    		
+    		renderable.translate(renderable.startPosition);
+
         }
 	}
 	
