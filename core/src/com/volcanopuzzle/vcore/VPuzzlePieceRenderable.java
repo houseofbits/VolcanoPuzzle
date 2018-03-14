@@ -28,31 +28,57 @@ public class VPuzzlePieceRenderable {
     short[] indices = null;
     int   vertexSize = 0;
 	Vector3 translation = new Vector3();
-	public Plane surfacePlane = new Plane();
-	
+	public Plane surfacePlane = new Plane();	
 	public boolean isFinished = false;
+	
+	public boolean setTransferToInitialPosition = false;
+	float transferVelocity = 0;
 	
 	public VPuzzlePieceRenderable(Model model){
 		
         modelInstance = new ModelInstance(model);
         modelBatch = new ModelBatch();
-        loadIntersectionMesh();		
+        loadIntersectionMesh();
+        transferVelocity = 0;
 	}
     public void render(PerspectiveCamera cam, Environment env){
+
+    	float dt = Gdx.graphics.getDeltaTime();
     	
     	getTranslation();
     	
-    	Vector3 dst = translation.cpy().sub(originalPosition);
-    	
-    	float len = dst.len();
-    	float margin = 10;
-    	if(len < margin && len > 0.1f){
-    		float force = 1.0f  - (len / margin);
-    		float dt = Gdx.graphics.getDeltaTime();
-    		dst.scl(force * dt * 20);
-    		translate(translation.sub(dst));
+    	if(setTransferToInitialPosition){
+    		
+    		Vector3 dst = translation.cpy().sub(startPosition); 
+    		float l = dst.len();
+    		if(l <= 0.1f){
+    			setTransferToInitialPosition = false;
+    		}else{
+    			
+    			if(l > 10){
+    				dst.nor().scl(10);
+    			}
+    			
+	    		dst.scl(dt * transferVelocity);
+	    		
+	    		transferVelocity += 40 * dt;
+	    		
+	    		translate(translation.sub(dst));
+    		}	
+    	}else{
+	    	Vector3 dst = translation.cpy().sub(originalPosition);    	
+	    	float len = dst.len();
+	    	float margin = 10;
+	    	if(len < margin && len > 0.1f){
+	    		float force = 1.0f  - (len / margin);
+	    		dst.scl(force * dt * 20);
+	    		translate(translation.sub(dst));
+	    	}
+	    	if(len <= 0.1f){
+	    		isFinished = true;
+	    		translate(originalPosition);
+	    	}
     	}
-    	if(len <= 0.1f)isFinished = true;
     	
         modelBatch.begin(cam);
         if(modelInstance != null){

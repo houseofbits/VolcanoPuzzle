@@ -21,6 +21,8 @@ public class VStageMain extends InputListener {
 		
 	public VVoronoiShapeGenerator shapeGen;
 	
+    public Group buttonsGroup = new Group();
+	
 	public VStageMain(VMain v){
 		volcano = v;
 	}
@@ -36,16 +38,16 @@ public class VStageMain extends InputListener {
 //		mainStage.setDebugUnderMouse(true);
 		
 		float swidth = mainStage.getWidth();
-		float buttonIconSize = swidth * 0.1f;
+		float buttonIconSize = swidth * 0.08f;
 		
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = VStaticAssets.Fonts.calibri18Font;		
-		
+	
         
     	Group g = new Group();
         ImageButton imgb = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic"));
         imgb.setSize(buttonIconSize, buttonIconSize);    	
-    	Label l = new Label("15 pieces", labelStyle);
+    	Label l = new Label("6 pieces", labelStyle);
     	l.setPosition(0, -10);
     	l.setAlignment(Align.center);
     	l.setWidth(buttonIconSize);
@@ -54,12 +56,12 @@ public class VStageMain extends InputListener {
         g.setName("BUTTON1");
         g.addListener(this);          
         g.setPosition(10, 10); 
-        mainStage.addActor(g);
+        buttonsGroup.addActor(g);
 
     	g = new Group();
         imgb = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic"));
         imgb.setSize(buttonIconSize, buttonIconSize);    	
-    	l = new Label("30 pieces", labelStyle);
+    	l = new Label("20 pieces", labelStyle);
     	l.setPosition(0, -10);
     	l.setAlignment(Align.center);
     	l.setWidth(buttonIconSize);
@@ -68,7 +70,9 @@ public class VStageMain extends InputListener {
         g.setName("BUTTON2");
         g.addListener(this);          
         g.setPosition(100, 10);       
-        mainStage.addActor(g);
+        buttonsGroup.addActor(g);
+        
+        mainStage.addActor(buttonsGroup);
         
 	}
 	
@@ -76,8 +80,12 @@ public class VStageMain extends InputListener {
 		mainStage.act(Gdx.graphics.getDeltaTime());
 		mainStage.draw();
 			
-	//	shapeGen.render();
+		shapeGen.render();
 
+	}
+	
+	public void showInfoWindow(){
+    	buttonsGroup.setVisible(true);		
 	}
 	
 	public void touchUp (InputEvent e, float x, float y, int pointer, int button) {
@@ -85,10 +93,12 @@ public class VStageMain extends InputListener {
 		Actor a = e.getListenerActor();
 		
         if(a.getName().compareTo("BUTTON1") == 0){
-        	volcano.generateNewPuzzle(15);
+        	volcano.generateNewPuzzle(6);
+        	buttonsGroup.setVisible(false);
         }  
         if(a.getName().compareTo("BUTTON2") == 0){
-        	volcano.generateNewPuzzle(30);
+        	volcano.generateNewPuzzle(20);
+        	buttonsGroup.setVisible(false);
         } 		
 	}
     public boolean touchDown (InputEvent e, float x, float y, int pointer, int button) {

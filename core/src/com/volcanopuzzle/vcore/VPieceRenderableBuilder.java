@@ -27,7 +27,7 @@ public class VPieceRenderableBuilder {
 		Vector2 innerPos = innerSize.cpy().scl(0.5f).sub(innerSize);
 		Random rnd = new Random();
 		
-		float minDst = 450.0f / numPoints;
+		float minDst = Math.min(450.0f / numPoints, 30);
 		
 		while(randomDistributedPoints.size < numPoints){
 			Vector2 p = new Vector2(((float)rnd.nextFloat() * outerSize.x) + outerPos.x, ((float)rnd.nextFloat() * outerSize.y) + outerPos.y);
