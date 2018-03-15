@@ -24,6 +24,8 @@ public class VStageMain extends InputListener {
     public Group buttonsGroup = new Group();
 	
     public int puzzleCurrentImageIndex = 0;
+    ImageButton buttonMain = null;
+    int difficultyLevels[] = {6,12,18,30,60,100};
     
 	public VStageMain(VMain v){
 		volcano = v;
@@ -40,41 +42,43 @@ public class VStageMain extends InputListener {
 //		mainStage.setDebugUnderMouse(true);
 		
 		float swidth = mainStage.getWidth();
+		float sheight = mainStage.getHeight();
 		float buttonIconSize = swidth * 0.08f;
 		
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = VStaticAssets.Fonts.calibri18Font;		
-	
         
-    	Group g = new Group();
-        ImageButton imgb = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic"));
-        imgb.setSize(buttonIconSize, buttonIconSize);    	
-    	Label l = new Label("6 pieces", labelStyle);
-    	l.setPosition(0, -10);
-    	l.setAlignment(Align.center);
-    	l.setWidth(buttonIconSize);
-    	g.addActor(imgb);
-        g.addActor(l);
-        g.setName("BUTTON1");
-        g.addListener(this);          
-        g.setPosition(10, 10); 
-        buttonsGroup.addActor(g);
-
-    	g = new Group();
-        imgb = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic"));
-        imgb.setSize(buttonIconSize, buttonIconSize);    	
-    	l = new Label("20 pieces", labelStyle);
-    	l.setPosition(0, -10);
-    	l.setAlignment(Align.center);
-    	l.setWidth(buttonIconSize);
-    	g.addActor(imgb);
-        g.addActor(l);
-        g.setName("BUTTON2");
-        g.addListener(this);          
-        g.setPosition(100, 10);       
-        buttonsGroup.addActor(g);
+        float posx = 100;
+        
+        for(int n=0; n<difficultyLevels.length; n++){
+        	
+        	Group g = new Group();
+            ImageButton imgb = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic"));
+            imgb.setSize(buttonIconSize, buttonIconSize);    	
+        	Label l = new Label(difficultyLevels[n]+" gabaliòi", labelStyle);
+        	l.setPosition(0, -10);
+        	l.setAlignment(Align.center);
+        	l.setWidth(buttonIconSize);
+        	g.addActor(imgb);
+            g.addActor(l);
+            g.setName("BUTTON_DIFF"+n);
+            g.addListener(this);          
+            g.setPosition(posx, 30); 
+            buttonsGroup.addActor(g);
+            
+            posx += buttonIconSize + 30;
+            
+        }
         
         mainStage.addActor(buttonsGroup);
+                
+        buttonMain = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-main-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-main"));
+        buttonMain.setSize(buttonIconSize, buttonIconSize);          
+        buttonMain.setName("BUTTON_MAIN");
+        buttonMain.setPosition(10, sheight - buttonIconSize - 10);
+        buttonMain.addListener(this);  
+        
+        mainStage.addActor(buttonMain);
         
 	}
 	
@@ -87,21 +91,24 @@ public class VStageMain extends InputListener {
 	}
 	
 	public void showInfoWindow(){
-    	buttonsGroup.setVisible(true);		
+    	buttonsGroup.setVisible(true);
 	}
 	
 	public void touchUp (InputEvent e, float x, float y, int pointer, int button) {
 		
 		Actor a = e.getListenerActor();
-		
-        if(a.getName().compareTo("BUTTON1") == 0){
-        	volcano.generateNewPuzzle(6);
-        //	buttonsGroup.setVisible(false);
-        }  
-        if(a.getName().compareTo("BUTTON2") == 0){
-        	volcano.generateNewPuzzle(20);
-        //	buttonsGroup.setVisible(false);
-        } 		
+		if(a.getName().compareTo("BUTTON_MAIN") == 0){
+			showInfoWindow();	
+		}
+		if(a.getName().contains("BUTTON_DIFF")){
+			for(int n=0; n<difficultyLevels.length; n++){
+				if(a.getName().compareTo("BUTTON_DIFF"+n) == 0){
+		        	volcano.generateNewPuzzle(difficultyLevels[n]);
+		        	buttonsGroup.setVisible(false);
+		        	break;
+				}				
+			}
+		}		
 	}
     public boolean touchDown (InputEvent e, float x, float y, int pointer, int button) {
         return true;

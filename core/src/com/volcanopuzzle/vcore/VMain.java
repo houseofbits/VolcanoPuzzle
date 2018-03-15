@@ -30,19 +30,24 @@ public class VMain {
 		FINISHED,		//Puzzle finished view
 	}
 	public GameStates	gameState = GameStates.PUZZLE;
-	
+	public PerspectiveCamera lightView;
 	public VCamera	camera;
 	public Environment environment = new Environment();
 	public VInputProcessor inputProcessor;
 	public VStageMain mainStage = new VStageMain(this);	
 	public VPieceRenderableBuilder meshBuilder = new VPieceRenderableBuilder();
-	public VPuzzleBackgroundRenderable backgroundRenderable = null;
-	
+	public VPuzzleBackgroundRenderable backgroundRenderable = null;	
 	Array<VPuzzlePieceRenderable> puzzlePieces = new Array<VPuzzlePieceRenderable>();
+	public int currentImage = 0;
 	
 	public void create(){
 		VStaticAssets.Init();
 		inputProcessor = new VInputProcessor(this);
+		
+		lightView = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		lightView.near = 1f;
+		lightView.far = 3000;
+		lightView.update();		
 		
 		mainStage.create();
 		
@@ -50,13 +55,15 @@ public class VMain {
 
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.5f, 1f));
         environment.add(new DirectionalLight().set(0.9f, 0.9f, 0.5f,  -1, -0.8f, 1));		
-        
-        //generateNewPuzzle(6);
 
 //        Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage, camController, inputProcessor));
         Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage, inputProcessor.gestureDetector, inputProcessor));        
         
         backgroundRenderable = new VPuzzleBackgroundRenderable();
+        
+        
+        
+        generateNewPuzzle(6);        
 	}
 	public void render(){
     	
@@ -81,8 +88,6 @@ public class VMain {
 			gameState = GameStates.FINISHED;
 			mainStage.showInfoWindow();
 			camera.setCameraState(PresetsIdentifiers.IMAGE_COMPLETE_VIEW);
-			//TODO Transition camera to IMAGE VIEW, and show GUI overlay
-			//System.out.println("PUZZLE COMPLETE");
 		}
 	}
 	public void generateNewPuzzle(int pieces){
@@ -94,7 +99,9 @@ public class VMain {
 		mainStage.shapeGen.generate(pieces,  d);
 		
 		Random rnd = new Random();
-		int r = rnd.nextInt(7) + 1;
+		int r = (currentImage+1);	//rnd.nextInt(7) + 1;
+		
+		currentImage = (currentImage+1)%7;
 		
         Texture texture = new Texture(Gdx.files.internal("img"+r+".png"));
         
@@ -134,12 +141,13 @@ public class VMain {
     	float dst = 1000000;
     	VPuzzlePieceRenderable found = null;
     	for(int i = 0;i<puzzlePieces.size; i++){
-    		if(puzzlePieces.get(i).IntersectRay(r, inter)){
+        	VPuzzlePieceRenderable pp = puzzlePieces.get(i);
+    		if(pp.IntersectRay(r, inter)){
     			float d = camera.get().position.cpy().sub(inter).len2();
-    			if(d < dst){
+    			if(!pp.isFinished && !pp.isGrabbed && d < dst){
     				dst = d;
     				intersectionPoint.set(inter);
-    				found = puzzlePieces.get(i);
+    				found = pp;
     				p.set(inter);
     			}
     		}
@@ -170,6 +178,10 @@ public class VMain {
     public void onDrag(int x, int y){
     	if(gameState == GameStates.PUZZLE){
 	    	if(dragPiece != null){
+	    		if(dragPiece.isGrabbed){
+	    			dragPiece = null;
+	    			return;
+	    		}
 	        	Ray r = camera.get().getPickRay(x, y);        
 	        	Intersector.intersectRayPlane(r, dragPiece.surfacePlane, dragIntersection);
 	    		Vector3 t = dragPiece.getTranslation();    		

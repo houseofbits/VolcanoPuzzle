@@ -41,6 +41,7 @@ public class VPuzzlePieceRenderable {
 	Vector3 translation = new Vector3();
 	public Plane surfacePlane = new Plane();	
 	public boolean isFinished = false;
+	public boolean isGrabbed = false;
 	
 	public boolean setTransferToInitialPosition = false;
 	float transferVelocity = 0;
@@ -92,13 +93,15 @@ public class VPuzzlePieceRenderable {
 	    		translate(translation.sub(dst));
     		}	
     	}else{
+    		isGrabbed = false;
 	    	Vector3 dst = translation.cpy().sub(originalPosition);    	
 	    	float len = dst.len();
-	    	float margin = 10;
+	    	float margin = 8;
 	    	if(len < margin && len > 0.1f){
 	    		float force = 1.0f  - (len / margin);
 	    		dst.scl(force * dt * 20);
 	    		translate(translation.sub(dst));
+	    		isGrabbed = true;
 	    	}
 	    	if(len <= 0.1f){
 	    		isFinished = true;

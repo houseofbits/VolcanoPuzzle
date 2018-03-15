@@ -46,7 +46,7 @@ public class VPieceRenderableBuilder {
 			if(!tooClose)randomDistributedPoints.add(p);
 		}
 	}
-	
+	/*
 	public VPuzzlePieceRenderable build(VVoronoiShapeGenerator.PieceShape shape, Vector2 size){
 		
 		Model model = build(shape.shape, size);
@@ -124,6 +124,7 @@ public class VPieceRenderableBuilder {
 	    Model model = modelBuilder.end();   
 	    return model;
 	}
+	*/
 	public boolean isPointInRect(Vector2 p, Vector2 rectPos, Vector2 rectSize){
 		
 		Vector2 pp = p.cpy().sub(rectPos);
