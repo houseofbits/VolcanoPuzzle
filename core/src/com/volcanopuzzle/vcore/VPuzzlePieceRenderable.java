@@ -120,7 +120,7 @@ public class VPuzzlePieceRenderable {
     public void renderDepth(PerspectiveCamera cam, Environment env){
         modelDepthBatch.begin(cam);
         if(pieceModelInstance != null){
-        	modelBatch.render(pieceModelInstance, env);
+        	modelDepthBatch.render(pieceModelInstance, env);
         }
         modelDepthBatch.end();   
     }
@@ -209,7 +209,7 @@ public class VPuzzlePieceRenderable {
 				
 		short idx = 0;
 		
-		float pieceHeight = 2;
+		float pieceHeight = 1;
 
 		//Top face
 		meshBuilder.begin(Usage.Position | Usage.TextureCoordinates);		

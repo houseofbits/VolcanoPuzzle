@@ -7,9 +7,10 @@ import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.shaders.DepthShader;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
 import com.volcanopuzzle.vcore.VMain;
 
-public class VDefaultShaderProvider extends DefaultShaderProvider{
+public class VShadowShaderProvider extends DefaultShaderProvider{
 	
 	protected VMain volcano = null;
 
@@ -20,11 +21,11 @@ public class VDefaultShaderProvider extends DefaultShaderProvider{
 	protected String fsString = "";	
 	protected boolean depthOnly = false;
 	
-	public VDefaultShaderProvider(VMain s){
+	public VShadowShaderProvider(VMain s){
 		this(s, null, null, true);	
 	}
 	
-	public VDefaultShaderProvider(VMain s, String vname, String fname, boolean depth){
+	public VShadowShaderProvider(VMain s, String vname, String fname, boolean depth){
 		super();
 		volcano = s;
 		if(vname!=null)vsString = Gdx.files.internal(vname).readString();
@@ -32,20 +33,14 @@ public class VDefaultShaderProvider extends DefaultShaderProvider{
 		shaderConfig = new DefaultShader.Config();
 		depthOnly = depth;
 	}	
-	public VDefaultShaderProvider(VMain s, String vname, String fname){
+	public VShadowShaderProvider(VMain s, String vname, String fname){
 		this(s, vname, fname, false);
 	}		
 	public void setDepthFunc(int depth){
 		shaderConfig.defaultDepthFunc = depth;		
 	}
 	public Shader getShader (Renderable renderable) {
-		
-		if(depthOnly){
-			DepthShader shader = new DepthShader(renderable);
-			shader.init();
-			return shader;
-		}
-		
+
 		Shader shader = renderable.shader;		
 		if (shader != null && shader.canRender(renderable)) return shader;
         
@@ -54,6 +49,12 @@ public class VDefaultShaderProvider extends DefaultShaderProvider{
 	        shaderProgram = new ShaderProgram(prefix + vsString, prefix + fsString);
         }        
         DefaultShader defaultShader;
+        
+        shaderProgram.begin();
+        shaderProgram.pedantic = false;
+        shaderProgram.setUniformf("u_lightPosition", volcano.lightView.position);
+        shaderProgram.setUniformMatrix("u_lightTrans", volcano.lightView.combined);
+        shaderProgram.end();
         
         defaultShader = new DefaultShader(renderable, shaderConfig, shaderProgram);
         defaultShader.init();

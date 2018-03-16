@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.volcanopuzzle.vcamera.VCamera;
 import com.volcanopuzzle.vcamera.VCameraPresetCollection.PresetsIdentifiers;
 import com.volcanopuzzle.vshaders.VDefaultShaderProvider;
+import com.volcanopuzzle.vshaders.VShadowShaderProvider;
 import com.volcanopuzzle.vshaders.VTextureRender;
 import com.volcanopuzzle.vstage.VStageMain;
 
@@ -37,13 +38,16 @@ public class VMain {
 	public Environment environment = new Environment();
 	public VInputProcessor inputProcessor;
 	public VStageMain mainStage = new VStageMain(this);	
-	public VPieceRenderableBuilder meshBuilder = new VPieceRenderableBuilder();
+	public VPieceDistributionBuilder meshBuilder = new VPieceDistributionBuilder();
 	public VPuzzleBackgroundRenderable backgroundRenderable = null;	
+	public VPuzzleTableRenderable tableRenderable = null;	
 	Array<VPuzzlePieceRenderable> puzzlePieces = new Array<VPuzzlePieceRenderable>();
 	public int currentImage = 0;
 	
 	public VDefaultShaderProvider depthShader = null;
-	public VDefaultShaderProvider puzzlePieceShader = null;
+	public VShadowShaderProvider puzzlePieceShader = null;
+	public VShadowShaderProvider imageBackgroundPieceShader = null;
+	public VShadowShaderProvider tableShader = null;	
 	
 	public VTextureRender	lightDepthTexture;
 	
@@ -55,8 +59,11 @@ public class VMain {
 		VStaticAssets.Init();
 		inputProcessor = new VInputProcessor(this);
 		
-		depthShader = new VDefaultShaderProvider(this);
-		puzzlePieceShader = new VDefaultShaderProvider(this, "shaders/piece.vertex.glsl", "shaders/piece.fragment.glsl");
+		//depthShader = new VDefaultShaderProvider(this);
+		depthShader = new VDefaultShaderProvider(this, "shaders/depth.vertex.glsl", "shaders/depth.fragment.glsl");	
+		puzzlePieceShader = new VShadowShaderProvider(this, "shaders/piece.vertex.glsl", "shaders/piece.fragment.glsl");
+		imageBackgroundPieceShader = new VShadowShaderProvider(this, "shaders/img.vertex.glsl", "shaders/img.fragment.glsl");
+		tableShader = new VShadowShaderProvider(this, "shaders/table.vertex.glsl", "shaders/table.fragment.glsl");
 		
 		lightDepthTexture = new VTextureRender(this);
 		
@@ -71,7 +78,8 @@ public class VMain {
         Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage, inputProcessor.gestureDetector, inputProcessor));        
         
         backgroundRenderable = new VPuzzleBackgroundRenderable(this);
-        		
+        tableRenderable = new VPuzzleTableRenderable(this);
+        
 		createLight();
 
 		
@@ -84,7 +92,7 @@ public class VMain {
 		lightView.far = 200;
 	
 		Quaternion q = new Quaternion();
-		q.setEulerAngles(180, 120, 0.0f);
+		q.setEulerAngles(180, 95, 0.0f);
 		
 		Vector3 nm = new Vector3(0,0,1);
 		nm = q.transform(nm).nor();	
@@ -93,7 +101,7 @@ public class VMain {
 		
 		lightView.position.set(new Vector3(0,0,-30).sub(nm));
 		lightView.up.set(0,-1,0);   
-		lightView.fieldOfView = 80;
+		lightView.fieldOfView = 100;
 		lightView.update();	
 	}
 	public void render(){
@@ -111,8 +119,9 @@ public class VMain {
         renderLightDepthMap();
         
         //VCommon.drawGrid(camera.get());
-        
-        backgroundRenderable.render(camera.get(), environment);        
+
+        tableRenderable.render(camera.get(), environment);        
+        backgroundRenderable.render(camera.get(), environment);  
         for(int i = 0;i<puzzlePieces.size; i++){
         	puzzlePieces.get(i).render(camera.get(), environment);
         }
@@ -129,6 +138,11 @@ public class VMain {
         
         lightDepthTexture.beginRender();
         
+    	Gdx.gl.glClearColor(1,1,0, 0.0f);
+    	Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
+        Gdx.gl.glEnable(GL30.GL_DEPTH_TEST);
+
+        tableRenderable.renderDepth(lightView, environment);        
         backgroundRenderable.renderDepth(lightView, environment);     
         for(int i = 0;i<puzzlePieces.size; i++){
         	puzzlePieces.get(i).renderDepth(lightView, environment);
@@ -148,7 +162,9 @@ public class VMain {
 		
 		currentImage = (currentImage+1)%7;
 		
-        Texture texture = new Texture(Gdx.files.internal("img"+r+".png"));
+        Texture texture = new Texture(Gdx.files.internal("img"+r+".png"), true);
+        
+        texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.Linear);
         
         mainStage.puzzleCurrentImageIndex = r;
         
@@ -157,9 +173,12 @@ public class VMain {
         Vector2 size = new Vector2(texture.getWidth() * imageScale, texture.getHeight() * imageScale);
         
         backgroundRenderable.setImageBackgroundSize(size.x, size.y);
+        
         backgroundRenderable.setDiffuseTexture(null, texture);
         
-        meshBuilder.generateDistributionPoints(mainStage.shapeGen.pieceShapes.size, size, new Vector2(180,130));
+        tableRenderable.setDiffuseTexture(null, texture);
+        
+        meshBuilder.generateDistributionPoints(mainStage.shapeGen.pieceShapes.size, size, new Vector2(230,130));
         
         for(int i=0;i<mainStage.shapeGen.pieceShapes.size; i++){
 
@@ -169,7 +188,7 @@ public class VMain {
         	puzzlePieces.add(renderable);
         	
     		Vector2 prr = meshBuilder.randomDistributedPoints.get(i);   		
-    		renderable.startPosition.set(prr.x, 100 - ((float)Math.random() * 500.0f), prr.y);    		
+    		renderable.startPosition.set(prr.x, ((float)Math.random() * 4.0f), prr.y);    		
     		renderable.translate(renderable.originalPosition);    		
     		renderable.setTransferToInitialPosition = true;
         }

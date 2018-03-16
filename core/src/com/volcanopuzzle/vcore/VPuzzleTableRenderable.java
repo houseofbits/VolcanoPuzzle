@@ -27,7 +27,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 
-public class VPuzzleBackgroundRenderable {
+public class VPuzzleTableRenderable {
 	
 	public VMain	volcano;
 	
@@ -37,19 +37,19 @@ public class VPuzzleBackgroundRenderable {
 	
 	public Vector3 imageBackgroundSize = new Vector3(1,1,1);
 	
-	public void setImageBackgroundSize(float x, float y){			
-		modelInstance.transform.idt().scale(x, 1, y);		
+	public void setImageBackgroundSize(float x, float y){
+		modelInstance.transform.idt().scale(x, 1, y);
 	}
 	
-	public VPuzzleBackgroundRenderable(VMain v){
+	public VPuzzleTableRenderable(VMain v){
 		
 		volcano = v;
 		
-        modelBatch = new ModelBatch(volcano.imageBackgroundPieceShader);
+        modelBatch = new ModelBatch(volcano.tableShader);
         modelDepthBatch = new ModelBatch(volcano.depthShader);
-        modelInstance = new ModelInstance(buildImageBackground());
+        modelInstance = new ModelInstance(buildTable());
         
-        setImageBackgroundSize(50,50);
+        setImageBackgroundSize(330,200);
 
         setLightDepthTexture(null, volcano.lightDepthTexture.get());
 	}
@@ -106,7 +106,7 @@ public class VPuzzleBackgroundRenderable {
 		modelBatch.dispose();
 	}
 	
-	private Model buildImageBackground(){
+	private Model buildTable(){
 		
 		MeshBuilder meshBuilder = new MeshBuilder();
 		
@@ -114,13 +114,15 @@ public class VPuzzleBackgroundRenderable {
 		meshBuilder.begin(Usage.Position | Usage.TextureCoordinates);		
 		meshBuilder.part("piece", GL30.GL_TRIANGLE_STRIP);
 			
-		short idx = meshBuilder.vertex(new Vector3(-0.5f, 0, -0.5f), new Vector3(0,1,0), new Color(), new Vector2(0, 0));
+		float y = -1.2f;
+		
+		short idx = meshBuilder.vertex(new Vector3(-0.5f, y, -0.5f), new Vector3(0,1,0), new Color(), new Vector2(0, 0));
 		meshBuilder.index(idx);		
-		idx = meshBuilder.vertex(new Vector3(-0.5f, 0, 0.5f), new Vector3(0,1,0), new Color(), new Vector2(0, 1));
+		idx = meshBuilder.vertex(new Vector3(-0.5f, y, 0.5f), new Vector3(0,1,0), new Color(), new Vector2(0, 1));
 		meshBuilder.index(idx);		
-		idx = meshBuilder.vertex(new Vector3(0.5f, 0, -0.5f), new Vector3(0,1,0), new Color(), new Vector2(1, 0));
+		idx = meshBuilder.vertex(new Vector3(0.5f, y, -0.5f), new Vector3(0,1,0), new Color(), new Vector2(1, 0));
 		meshBuilder.index(idx);		
-		idx = meshBuilder.vertex(new Vector3(0.5f, 0, 0.5f), new Vector3(0,1,0), new Color(), new Vector2(1, 1));
+		idx = meshBuilder.vertex(new Vector3(0.5f, y, 0.5f), new Vector3(0,1,0), new Color(), new Vector2(1, 1));
 		meshBuilder.index(idx);		
 
 		Mesh mesh1 = meshBuilder.end();

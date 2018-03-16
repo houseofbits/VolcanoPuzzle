@@ -15,7 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
-public class VPieceRenderableBuilder {
+public class VPieceDistributionBuilder {
 	
 	public Array<Vector2> randomDistributedPoints = new Array<Vector2>();
 	
