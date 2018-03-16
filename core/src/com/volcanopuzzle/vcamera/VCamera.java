@@ -20,7 +20,7 @@ public class VCamera extends VCameraPreset implements VCameraPreset.VCameraPrese
 		setCallback(this);
 		cam = new PerspectiveCamera(35, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         cam.near = 1f;
-        cam.far = 3000;
+        cam.far = 200;
         cam.update();
 	}
 

@@ -28,7 +28,10 @@ import com.badlogic.gdx.utils.Array;
 
 public class VPuzzlePieceRenderable {
 	
+	public VMain	volcano;
+	
 	protected ModelBatch modelBatch = null;
+	protected ModelBatch modelDepthBatch = null;
 	protected ModelInstance pieceModelInstance = null;	
 	
 	protected ModelInstance shadowModelInstance = null;	
@@ -46,29 +49,27 @@ public class VPuzzlePieceRenderable {
 	public boolean setTransferToInitialPosition = false;
 	float transferVelocity = 0;
 	
-	public VPuzzlePieceRenderable(VVoronoiShapeGenerator.PieceShape shape, Vector2 size){
+	public VPuzzlePieceRenderable(VMain v, VVoronoiShapeGenerator.PieceShape shape, Vector2 size){
+		
+		volcano = v;
 		
 		Model model = buildPiece(shape, size);
 
 		pieceModelInstance = new ModelInstance(model);
-        modelBatch = new ModelBatch();
+        modelBatch = new ModelBatch(volcano.puzzlePieceShader);
+        modelDepthBatch = new ModelBatch(volcano.depthShader);
 		
 		Vector2 t = shape.position.cpy().scl(size).sub(size.cpy().scl(0.5f));
 		
 		originalPosition.set(t.x, 0, t.y);
 
+		setLightDepthTexture(null, volcano.lightDepthTexture.get());
+		
         loadIntersectionMesh();
         transferVelocity = 0;		
 	}
 	
-	public VPuzzlePieceRenderable(Model model){
-		
-        pieceModelInstance = new ModelInstance(model);
-        modelBatch = new ModelBatch();
-        loadIntersectionMesh();
-        transferVelocity = 0;
-	}
-    public void render(PerspectiveCamera cam, Environment env){
+	public void update(){
 
     	float dt = Gdx.graphics.getDeltaTime();
     	
@@ -108,13 +109,22 @@ public class VPuzzlePieceRenderable {
 	    		translate(originalPosition);
 	    	}
     	}
-    	
+	}	
+    public void render(PerspectiveCamera cam, Environment env){
         modelBatch.begin(cam);
         if(pieceModelInstance != null){
         	modelBatch.render(pieceModelInstance, env);
         }
-        modelBatch.end();       
+        modelBatch.end();
     }
+    public void renderDepth(PerspectiveCamera cam, Environment env){
+        modelDepthBatch.begin(cam);
+        if(pieceModelInstance != null){
+        	modelBatch.render(pieceModelInstance, env);
+        }
+        modelDepthBatch.end();   
+    }
+    
     public void translate(Vector3 pos){
         if(pieceModelInstance != null) {
             pieceModelInstance.transform.idt();
@@ -132,6 +142,9 @@ public class VPuzzlePieceRenderable {
     public void setDiffuseTexture(String id, Texture texture){
     	setNodeMaterialAttribute(id, new TextureAttribute(TextureAttribute.Diffuse, texture));
     }
+    public void setLightDepthTexture(String id, Texture texture){
+    	setNodeMaterialAttribute(id, new TextureAttribute(TextureAttribute.Ambient, texture));
+    }    
     public void setNodeMaterialAttribute(String id, Attribute attr){
     	Node n = getNode(id);
     	if(n!=null){

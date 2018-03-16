@@ -29,7 +29,10 @@ import com.badlogic.gdx.math.collision.Ray;
 
 public class VPuzzleBackgroundRenderable {
 	
+	public VMain	volcano;
+	
 	protected ModelBatch modelBatch = null;
+	protected ModelBatch modelDepthBatch = null;
 	protected ModelInstance modelInstance = null;	
 	
 	public Vector3 imageBackgroundSize = new Vector3(1,1,1);
@@ -38,10 +41,12 @@ public class VPuzzleBackgroundRenderable {
 		modelInstance.transform.idt().scale(x, 1, y);		
 	}
 	
-	public VPuzzleBackgroundRenderable(){
+	public VPuzzleBackgroundRenderable(VMain v){
+		
+		volcano = v;
 		
         modelBatch = new ModelBatch();
-        
+        modelDepthBatch = new ModelBatch(volcano.depthShader);
         modelInstance = new ModelInstance(buildImageBackground());
         
         setImageBackgroundSize(50,50);
@@ -55,6 +60,13 @@ public class VPuzzleBackgroundRenderable {
         }
         modelBatch.end();       
     }
+    public void renderDepth(PerspectiveCamera cam, Environment env){
+        modelDepthBatch.begin(cam);
+        if(modelInstance != null){
+        	modelBatch.render(modelInstance, env);
+        }
+        modelDepthBatch.end();   
+    }    
     public void setTransparency(String id, float f){    
     	BlendingAttribute b = new BlendingAttribute(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 		b.opacity = f;

@@ -20,6 +20,8 @@ import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
 import com.volcanopuzzle.vcamera.VCamera;
 import com.volcanopuzzle.vcamera.VCameraPresetCollection.PresetsIdentifiers;
+import com.volcanopuzzle.vshaders.VDefaultShaderProvider;
+import com.volcanopuzzle.vshaders.VTextureRender;
 import com.volcanopuzzle.vstage.VStageMain;
 
 public class VMain {
@@ -40,14 +42,23 @@ public class VMain {
 	Array<VPuzzlePieceRenderable> puzzlePieces = new Array<VPuzzlePieceRenderable>();
 	public int currentImage = 0;
 	
+	public VDefaultShaderProvider depthShader = null;
+	public VDefaultShaderProvider puzzlePieceShader = null;
+	
+	public VTextureRender	lightDepthTexture;
+	
+	private VPuzzlePieceRenderable dragPiece = null;
+	private Vector3 dragOffset = new Vector3();
+	private Vector3 dragIntersection = new Vector3();	
+	
 	public void create(){
 		VStaticAssets.Init();
 		inputProcessor = new VInputProcessor(this);
 		
-		lightView = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		lightView.near = 1f;
-		lightView.far = 3000;
-		lightView.update();		
+		depthShader = new VDefaultShaderProvider(this);
+		puzzlePieceShader = new VDefaultShaderProvider(this, "shaders/piece.vertex.glsl", "shaders/piece.fragment.glsl");
+		
+		lightDepthTexture = new VTextureRender(this);
 		
 		mainStage.create();
 		
@@ -59,11 +70,31 @@ public class VMain {
 //        Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage, camController, inputProcessor));
         Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage, inputProcessor.gestureDetector, inputProcessor));        
         
-        backgroundRenderable = new VPuzzleBackgroundRenderable();
-        
-        
-        
+        backgroundRenderable = new VPuzzleBackgroundRenderable(this);
+        		
+		createLight();
+
+		
         generateNewPuzzle(6);        
+	}
+	public void createLight(){
+		
+		lightView = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		lightView.near = 1f;
+		lightView.far = 200;
+	
+		Quaternion q = new Quaternion();
+		q.setEulerAngles(180, 120, 0.0f);
+		
+		Vector3 nm = new Vector3(0,0,1);
+		nm = q.transform(nm).nor();	
+		lightView.direction.set(nm);		
+		nm.scl(100);
+		
+		lightView.position.set(new Vector3(0,0,-30).sub(nm));
+		lightView.up.set(0,-1,0);   
+		lightView.fieldOfView = 80;
+		lightView.update();	
 	}
 	public void render(){
     	
@@ -73,11 +104,15 @@ public class VMain {
         Gdx.gl.glEnable(GL30.GL_DEPTH_TEST);
         
         camera.update();
+        for(int i = 0;i<puzzlePieces.size; i++){
+        	puzzlePieces.get(i).update();
+        }
+        
+        renderLightDepthMap();
         
         //VCommon.drawGrid(camera.get());
         
-        backgroundRenderable.render(camera.get(), environment);
-        
+        backgroundRenderable.render(camera.get(), environment);        
         for(int i = 0;i<puzzlePieces.size; i++){
         	puzzlePieces.get(i).render(camera.get(), environment);
         }
@@ -89,17 +124,27 @@ public class VMain {
 			mainStage.showInfoWindow();
 			camera.setCameraState(PresetsIdentifiers.IMAGE_COMPLETE_VIEW);
 		}
-	}
+	}	
+	public void renderLightDepthMap(){
+        
+        lightDepthTexture.beginRender();
+        
+        backgroundRenderable.renderDepth(lightView, environment);     
+        for(int i = 0;i<puzzlePieces.size; i++){
+        	puzzlePieces.get(i).renderDepth(lightView, environment);
+        }
+        
+        lightDepthTexture.endRender();
+	}	
 	public void generateNewPuzzle(int pieces){
 		
 		puzzlePieces.clear();
 		
 		float d = (1.0f / (float)Math.sqrt((float)pieces)) * 0.5f;
-
 		mainStage.shapeGen.generate(pieces,  d);
 		
-		Random rnd = new Random();
-		int r = (currentImage+1);	//rnd.nextInt(7) + 1;
+//		Random rnd = new Random();
+		int r = (currentImage+1);
 		
 		currentImage = (currentImage+1)%7;
 		
@@ -108,10 +153,8 @@ public class VMain {
         mainStage.puzzleCurrentImageIndex = r;
         
         float maxWidth=100, maxHeight=100;
-        
         float imageScale = Math.min(maxWidth / texture.getWidth(), maxHeight / texture.getHeight());
         Vector2 size = new Vector2(texture.getWidth() * imageScale, texture.getHeight() * imageScale);
-        
         
         backgroundRenderable.setImageBackgroundSize(size.x, size.y);
         backgroundRenderable.setDiffuseTexture(null, texture);
@@ -119,14 +162,14 @@ public class VMain {
         meshBuilder.generateDistributionPoints(mainStage.shapeGen.pieceShapes.size, size, new Vector2(180,130));
         
         for(int i=0;i<mainStage.shapeGen.pieceShapes.size; i++){
-        	//VPuzzlePieceRenderable renderable = meshBuilder.build(mainStage.shapeGen.pieceShapes.get(i), size);
-        	VPuzzlePieceRenderable renderable = new VPuzzlePieceRenderable(mainStage.shapeGen.pieceShapes.get(i), size);
+
+        	VPuzzlePieceRenderable renderable = new VPuzzlePieceRenderable(this, mainStage.shapeGen.pieceShapes.get(i), size);
         			
         	renderable.setDiffuseTexture(null, texture);	
         	puzzlePieces.add(renderable);
         	
     		Vector2 prr = meshBuilder.randomDistributedPoints.get(i);   		
-    		renderable.startPosition.set(prr.x, (float)Math.random() * 5.0f, prr.y);    		
+    		renderable.startPosition.set(prr.x, 100 - ((float)Math.random() * 500.0f), prr.y);    		
     		renderable.translate(renderable.originalPosition);    		
     		renderable.setTransferToInitialPosition = true;
         }
@@ -154,11 +197,6 @@ public class VMain {
     	}    	
 		return found;
 	}
-	
-	private VPuzzlePieceRenderable dragPiece = null;
-	private Vector3 dragOffset = new Vector3();
-	private Vector3 dragIntersection = new Vector3();
-	
 	public void onTouchDown(int x, int y){
 		if(gameState == GameStates.PUZZLE){
 			VPuzzlePieceRenderable rnd = getPieceAtPoint(x, y, dragIntersection);
