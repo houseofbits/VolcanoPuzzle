@@ -24,8 +24,13 @@ public class VStageMain extends InputListener {
     public Group buttonsGroup = new Group();
 	
     public int puzzleCurrentImageIndex = 0;
+    
     ImageButton buttonMain = null;
+    Group groupNext = null;
+    
     int difficultyLevels[] = {6,12,18,30,60,100};
+    
+    int currentDifficultyLevelIndex = 0;
     
 	public VStageMain(VMain v){
 		volcano = v;
@@ -69,17 +74,26 @@ public class VStageMain extends InputListener {
             posx += buttonIconSize + 30;
             
         }
-        
+        buttonsGroup.setVisible(false);
         mainStage.addActor(buttonsGroup);
                 
         buttonMain = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-main-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-main"));
         buttonMain.setSize(buttonIconSize, buttonIconSize);          
         buttonMain.setName("BUTTON_MAIN");
-        buttonMain.setPosition(10, sheight - buttonIconSize - 10);
-        buttonMain.addListener(this);  
-        
+        buttonMain.setPosition(10, 10);
+        buttonMain.addListener(this);          
         mainStage.addActor(buttonMain);
         
+        groupNext = new Group();
+        ImageButton buttonNext = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-return-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-return"));
+        buttonNext.setSize(buttonIconSize, buttonIconSize);          
+        buttonNext.setName("BUTTON_NEXT");
+        buttonNext.setPosition(swidth - buttonIconSize - 10, 10);
+        buttonNext.addListener(this);          
+        groupNext.addActor(buttonNext);
+        groupNext.setVisible(false);
+        
+        mainStage.addActor(groupNext);
 	}
 	
 	public void render(){
@@ -90,20 +104,27 @@ public class VStageMain extends InputListener {
 
 	}
 	
-	public void showInfoWindow(){
-    	buttonsGroup.setVisible(true);
+	public void onPuzzleComplete(){
+		groupNext.setVisible(true);
+		//TODO Show animation
 	}
 	
 	public void touchUp (InputEvent e, float x, float y, int pointer, int button) {
 		
 		Actor a = e.getListenerActor();
 		if(a.getName().compareTo("BUTTON_MAIN") == 0){
-			showInfoWindow();	
+			buttonsGroup.setVisible(!buttonsGroup.isVisible());	
 		}
+		if(a.getName().compareTo("BUTTON_NEXT") == 0){
+			volcano.generateNewPuzzle(difficultyLevels[currentDifficultyLevelIndex]);
+			groupNext.setVisible(false);
+		}		
 		if(a.getName().contains("BUTTON_DIFF")){
+			groupNext.setVisible(false);
 			for(int n=0; n<difficultyLevels.length; n++){
 				if(a.getName().compareTo("BUTTON_DIFF"+n) == 0){
-		        	volcano.generateNewPuzzle(difficultyLevels[n]);
+					currentDifficultyLevelIndex = n;
+		        	volcano.generateNewPuzzle(difficultyLevels[currentDifficultyLevelIndex]);
 		        	buttonsGroup.setVisible(false);
 		        	break;
 				}				

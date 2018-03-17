@@ -160,6 +160,7 @@ public class VPuzzlePieceRenderable {
     //TODO Disposing of renderables
 	public void dispose(){
 		modelBatch.dispose();
+		modelDepthBatch.dispose();
 	}
 
     public void loadIntersectionMesh(){    	

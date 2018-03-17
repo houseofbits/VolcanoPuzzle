@@ -60,9 +60,9 @@ public class VCameraPreset {
 	
 	//Target goal 	
 	public float	transitionAngleXGoal = 8.0f;	//4.0f;
-	public float	transitionAngleYGoal = 8.0f;	//4.0f
+	public float	transitionAngleYGoal = 1.0f;	//4.0f
 	public float 	transitionFovGoal = 8.0f;		//2.0f
-	public float 	transitionDistanceGoal = 8.0f;	//2.0f
+	public float 	transitionDistanceGoal = 1.0f;	//2.0f
 	public float 	transitionPivotGoal = 8.0f;		//2.0f
 	
 	public class WayPoint{
@@ -230,7 +230,7 @@ public class VCameraPreset {
 		targetAngleX = angleX;
 	}
 	public void setTransitionAngleY(float angleY){
-		angleY = Math.min(Math.max(angleY, -85), 85);
+		angleY = Math.min(Math.max(angleY, -89.9f), 89.9f);
 		transitionAngleYEnabled = true;
 		targetAngleY = angleY;
 	}

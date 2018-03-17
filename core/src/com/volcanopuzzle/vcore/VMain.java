@@ -130,7 +130,7 @@ public class VMain {
 		
 		if(checkPuzzleComplete() && gameState == GameStates.PUZZLE){
 			gameState = GameStates.FINISHED;
-			mainStage.showInfoWindow();
+			mainStage.onPuzzleComplete();
 			camera.setCameraState(PresetsIdentifiers.IMAGE_COMPLETE_VIEW);
 		}
 	}	
@@ -152,6 +152,14 @@ public class VMain {
 	}	
 	public void generateNewPuzzle(int pieces){
 		
+        for(int i = 0;i<puzzlePieces.size; i++){
+        	puzzlePieces.get(i).dispose();
+        }
+
+        backgroundRenderable.setDiffuseTexture(null, null);
+        
+        tableRenderable.setDiffuseTexture(null, null);        
+        
 		puzzlePieces.clear();
 		
 		float d = (1.0f / (float)Math.sqrt((float)pieces)) * 0.5f;
@@ -164,11 +172,11 @@ public class VMain {
 		
         Texture texture = new Texture(Gdx.files.internal("img"+r+".png"), true);
         
-        texture.setFilter(Texture.TextureFilter.MipMap, Texture.TextureFilter.Linear);
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         
         mainStage.puzzleCurrentImageIndex = r;
         
-        float maxWidth=100, maxHeight=100;
+        float maxWidth=400, maxHeight=100;
         float imageScale = Math.min(maxWidth / texture.getWidth(), maxHeight / texture.getHeight());
         Vector2 size = new Vector2(texture.getWidth() * imageScale, texture.getHeight() * imageScale);
         

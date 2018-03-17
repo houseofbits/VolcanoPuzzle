@@ -8,11 +8,11 @@ public class VCameraPresetMain extends VCameraPreset {
         
 		switch(identifier){
 		case PUZZLE_VIEW:
-
+			anglePos.y = 85;
 			break;
 		case IMAGE_COMPLETE_VIEW:
-			distance = 50;
-			anglePos.y = 90;
+			distance = 60;
+			anglePos.y = 89.9f;
 			break;			
 		default:
 			break;			

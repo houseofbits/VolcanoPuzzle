@@ -15,6 +15,13 @@ vec4 boxBlur (sampler2D source, vec2 uv) {
 
 	vec2 texOffset = vec2(0.008, 0.008);
 	
+	float edgeOffset = 0.1;
+	vec2 edgeDistMult = vec2(1);
+	if(uv.s <= edgeOffset)texOffset.s *= (uv.s / edgeOffset);	
+	if(uv.t <= edgeOffset)texOffset.t *= (uv.t / edgeOffset);	
+	if(uv.s >= (1.0-edgeOffset))texOffset.s *= ((1.0-uv.s) / edgeOffset);	
+	if(uv.t >= (1.0-edgeOffset))texOffset.t *= ((1.0-uv.t) / edgeOffset);	
+	
 	vec2 tc0 = uv.st + vec2(-texOffset.s, -texOffset.t);
 	vec2 tc1 = uv.st + vec2(         0.0, -texOffset.t);
 	vec2 tc2 = uv.st + vec2(+texOffset.s, -texOffset.t);
@@ -44,7 +51,11 @@ vec4 boxBlur (sampler2D source, vec2 uv) {
 
 void main() {
 	
-	vec4 img  = vec4(boxBlur(u_diffuseTexture, v_diffuseUV).r);
+	vec4 img  = boxBlur(u_diffuseTexture, v_diffuseUV);
+	
+	float gray = (img.r + img.g + img.b) / 3.0;
+	
+	img = vec4(vec3(gray), 1);
 	
 	vec4 finalColor = mix(img, vec4(0.3,0.3,0.3,1), 0.7);
 	
