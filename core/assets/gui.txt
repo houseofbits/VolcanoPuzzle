@@ -1,75 +1,96 @@
 gui.png
-size: 1400, 141
+size: 944, 282
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 button-close-on
   rotate: false
-  xy: 0, 0
+  xy: 140, 141
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-close
   rotate: false
-  xy: 140, 0
+  xy: 0, 141
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-generic-on
   rotate: false
-  xy: 280, 0
+  xy: 280, 141
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-generic
   rotate: false
-  xy: 420, 0
+  xy: 700, 141
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-info-on
   rotate: false
-  xy: 560, 0
+  xy: 420, 141
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-info
   rotate: false
-  xy: 700, 0
+  xy: 560, 141
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-main-on
   rotate: false
-  xy: 840, 0
+  xy: 804, 0
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-main
   rotate: false
-  xy: 980, 0
+  xy: 664, 0
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-return-on
   rotate: false
-  xy: 1120, 0
+  xy: 384, 0
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-return
   rotate: false
-  xy: 1260, 0
+  xy: 524, 0
   size: 140, 141
   orig: 140, 141
+  offset: 0, 0
+  index: -1
+checkBoxCheck
+  rotate: false
+  xy: 128, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+checkBoxOff
+  rotate: false
+  xy: 0, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+checkBoxOn
+  rotate: false
+  xy: 256, 0
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: -1

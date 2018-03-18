@@ -55,7 +55,7 @@ void main() {
 	
 	float gray = (img.r + img.g + img.b) / 3.0;
 	
-	img = vec4(vec3(gray), 1);
+	img = vec4(vec3(gray * 2), 1);
 	
 	vec4 finalColor = mix(img, vec4(0.3,0.3,0.3,1), 0.7);
 	

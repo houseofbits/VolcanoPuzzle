@@ -4,11 +4,13 @@ import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
@@ -32,6 +34,7 @@ public class VMain {
 		PUZZLE,			//Play puzzle view
 		FINISHED,		//Puzzle finished view
 	}
+    public AssetManager assetsManager = new AssetManager();	
 	public GameStates	gameState = GameStates.PUZZLE;
 	public PerspectiveCamera lightView;
 	public VCamera	camera;
@@ -43,6 +46,7 @@ public class VMain {
 	public VPuzzleTableRenderable tableRenderable = null;	
 	Array<VPuzzlePieceRenderable> puzzlePieces = new Array<VPuzzlePieceRenderable>();
 	public int currentImage = 0;
+	public int imageCount = 7;	
 	
 	public VDefaultShaderProvider depthShader = null;
 	public VShadowShaderProvider puzzlePieceShader = null;
@@ -54,6 +58,9 @@ public class VMain {
 	private VPuzzlePieceRenderable dragPiece = null;
 	private Vector3 dragOffset = new Vector3();
 	private Vector3 dragIntersection = new Vector3();	
+	
+	float cameraZoomSteps[] = {100, 80, 60, 40};
+	int	currentCameraZoomStep = 0;
 	
 	public void create(){
 		VStaticAssets.Init();
@@ -83,7 +90,7 @@ public class VMain {
 		createLight();
 
 		
-        generateNewPuzzle(6);        
+        generateNewPuzzle(6, 0);        
 	}
 	public void createLight(){
 		
@@ -150,31 +157,31 @@ public class VMain {
         
         lightDepthTexture.endRender();
 	}	
-	public void generateNewPuzzle(int pieces){
+	public void generateNewPuzzle(int pieces, int idx){
 		
         for(int i = 0;i<puzzlePieces.size; i++){
         	puzzlePieces.get(i).dispose();
         }
-
-        backgroundRenderable.setDiffuseTexture(null, null);
-        
-        tableRenderable.setDiffuseTexture(null, null);        
-        
+        backgroundRenderable.setDiffuseTexture(null, null);        
+        tableRenderable.setDiffuseTexture(null, null);                
 		puzzlePieces.clear();
+
+		int r = 0;
+		if(idx >=0 && idx < imageCount)r  = idx;
+		else r = (currentImage+1)%imageCount;
+		
+		currentImage = r;
+		
+        Texture texture = getPuzzleTexture(r);
+        
+        if(texture == null)return;
+        
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);		
 		
 		float d = (1.0f / (float)Math.sqrt((float)pieces)) * 0.5f;
 		mainStage.shapeGen.generate(pieces,  d);
-		
-//		Random rnd = new Random();
-		int r = (currentImage+1);
-		
-		currentImage = (currentImage+1)%7;
-		
-        Texture texture = new Texture(Gdx.files.internal("img"+r+".png"), true);
         
-        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        
-        mainStage.puzzleCurrentImageIndex = r;
+      //  mainStage.puzzleCurrentImageIndex = r;
         
         float maxWidth=400, maxHeight=100;
         float imageScale = Math.min(maxWidth / texture.getWidth(), maxHeight / texture.getHeight());
@@ -186,7 +193,7 @@ public class VMain {
         
         tableRenderable.setDiffuseTexture(null, texture);
         
-        meshBuilder.generateDistributionPoints(mainStage.shapeGen.pieceShapes.size, size, new Vector2(230,130));
+        meshBuilder.generateDistributionPoints(mainStage.shapeGen.pieceShapes.size, size, new Vector2(250,105));
         
         for(int i=0;i<mainStage.shapeGen.pieceShapes.size; i++){
 
@@ -195,13 +202,27 @@ public class VMain {
         	renderable.setDiffuseTexture(null, texture);	
         	puzzlePieces.add(renderable);
         	
-    		Vector2 prr = meshBuilder.randomDistributedPoints.get(i);   		
+    		Vector2 prr = meshBuilder.randomDistributedPoints.get(i);
     		renderable.startPosition.set(prr.x, ((float)Math.random() * 4.0f), prr.y);    		
     		renderable.translate(renderable.originalPosition);    		
     		renderable.setTransferToInitialPosition = true;
         }
         gameState = GameStates.PUZZLE;
+		
+		currentCameraZoomStep = 0;        
         camera.setCameraState(PresetsIdentifiers.PUZZLE_VIEW);
+	}
+	
+	Texture getPuzzleTexture(int idx){
+		
+		String filename = "img"+idx+".png";
+		
+		if(!assetsManager.isLoaded(filename)) {
+			assetsManager.load(filename, Texture.class);
+		}
+		assetsManager.finishLoadingAsset(filename);
+		
+		return assetsManager.get(filename, Texture.class);
 	}
 	
 	public VPuzzlePieceRenderable getPieceAtPoint(int x, int y, Vector3 p){
@@ -225,7 +246,7 @@ public class VMain {
 		return found;
 	}
 	public void onTouchDown(int x, int y){
-		if(gameState == GameStates.PUZZLE){
+		if(gameState == GameStates.PUZZLE && !mainStage.isLocked()){
 			VPuzzlePieceRenderable rnd = getPieceAtPoint(x, y, dragIntersection);
 			if(rnd != null){
 				dragPiece = rnd;
@@ -241,7 +262,7 @@ public class VMain {
 
 	}
     public void onDrag(int x, int y){
-    	if(gameState == GameStates.PUZZLE){
+    	if(gameState == GameStates.PUZZLE && !mainStage.isLocked()){
 	    	if(dragPiece != null){
 	    		if(dragPiece.isGrabbed){
 	    			dragPiece = null;
@@ -265,4 +286,16 @@ public class VMain {
     	return true;
     }
     
+    public void completeZoomIn(){
+    	if(currentCameraZoomStep < cameraZoomSteps.length  - 1){
+    		currentCameraZoomStep++;
+    		camera.setTransitionDistance(cameraZoomSteps[currentCameraZoomStep]);
+    	}
+    }
+    public void completeZoomOut(){
+    	if(currentCameraZoomStep > 0){
+    		currentCameraZoomStep--;
+    		camera.setTransitionDistance(cameraZoomSteps[currentCameraZoomStep]);
+    	}
+    }
 }

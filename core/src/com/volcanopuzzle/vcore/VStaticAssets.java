@@ -15,13 +15,13 @@ public class VStaticAssets {
 		GUI.buttonsSkin.addRegions(new TextureAtlas("gui.txt"));
 	}
 	public static class Text{
-
+		public static final String selectorTitle = "Saliec kādu no 12 minerālu attēliem. Zemāk vari izvēlēties puzles gabaliņu skaitu."; 	
 	}
 	public static class Fonts{
 		public static final BitmapFont calibriLightFont = new BitmapFont(Gdx.files.internal("fonts/calibri-light-50.fnt"));
 		public static final BitmapFont calibri25Font = new BitmapFont(Gdx.files.internal("fonts/calibri-25.fnt"));
 		public static final BitmapFont calibri18Font = new BitmapFont(Gdx.files.internal("fonts/calibri-18.fnt"));
-		public static final BitmapFont futuraFont = new BitmapFont(Gdx.files.internal("fonts/futura-32.fnt"));
+		public static final BitmapFont futuraFont = new BitmapFont(Gdx.files.internal("fonts/futura-25.fnt"));
 	}
 	public static class GUI{
 		public static final Skin buttonsSkin = new Skin();

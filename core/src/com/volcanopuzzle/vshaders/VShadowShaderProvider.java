@@ -9,7 +9,10 @@ import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.volcanopuzzle.vcore.VMain;
-
+//
+//https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
+//http://www.microbasic.net/tutorials/shadow-mapping/Full.html
+//
 public class VShadowShaderProvider extends DefaultShaderProvider{
 	
 	protected VMain volcano = null;
