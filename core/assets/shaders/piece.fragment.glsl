@@ -13,10 +13,11 @@ varying vec4 v_position;
 varying vec4 v_positionLightTrans;
 
 void main() {
+
 	vec4 finalColor = vec4(diffuse.rgb,1);
 	
 	float shadow = 0.0;
-	vec2 texelSize = 1.0 / 1024.0;
+	float texelSize = 1.0 / 1024.0;
 	
 	float currentDepth = length(vec3(v_position.xyz - u_lightPosition))/200.0;	
 	float bias = 0.005;

@@ -16,6 +16,7 @@ public class VStaticAssets {
 	}
 	public static class Text{
 		public static final String selectorTitle = "Saliec kādu no 12 minerālu attēliem. Zemāk vari izvēlēties puzles gabaliņu skaitu."; 	
+		public static final String continueButtonTitle = "Turpināt";
 	}
 	public static class Fonts{
 		public static final BitmapFont calibriLightFont = new BitmapFont(Gdx.files.internal("fonts/calibri-light-50.fnt"));

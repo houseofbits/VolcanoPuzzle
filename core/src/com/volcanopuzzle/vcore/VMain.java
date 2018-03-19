@@ -71,7 +71,7 @@ public class VMain {
 		puzzlePieceShader = new VShadowShaderProvider(this, "shaders/piece.vertex.glsl", "shaders/piece.fragment.glsl");
 		imageBackgroundPieceShader = new VShadowShaderProvider(this, "shaders/img.vertex.glsl", "shaders/img.fragment.glsl");
 		tableShader = new VShadowShaderProvider(this, "shaders/table.vertex.glsl", "shaders/table.fragment.glsl");
-		
+
 		lightDepthTexture = new VTextureRender(this);
 		
 		mainStage.create();

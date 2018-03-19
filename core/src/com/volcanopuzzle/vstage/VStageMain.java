@@ -139,7 +139,7 @@ public class VStageMain extends InputListener {
         buttonNext.addListener(this);          
         groupNext.addActor(buttonNext);
         
-        Label labelButtonNext= new Label("Turpināt", new Label.LabelStyle(VStaticAssets.Fonts.futuraFont, Color.WHITE));
+        Label labelButtonNext= new Label(VStaticAssets.Text.continueButtonTitle, new Label.LabelStyle(VStaticAssets.Fonts.futuraFont, Color.WHITE));
         float labely = buttonOffset + ((buttonIconSize - labelButtonNext.getPrefHeight()) / 2);
         float labelx = buttonNext.getX() - labelButtonNext.getPrefWidth();        		
         labelButtonNext.setPosition(labelx, labely);        
