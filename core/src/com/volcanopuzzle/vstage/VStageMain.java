@@ -118,7 +118,7 @@ public class VStageMain extends InputListener {
         mainStage.addActor(selectorTable);
         
         
-        buttonMain = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-main-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-main"));
+        buttonMain = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-main-light-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-main-light"));
         buttonMain.setSize(buttonIconSize, buttonIconSize);          
         buttonMain.setName("BUTTON_MAIN");
         buttonMain.setPosition(buttonOffset, buttonOffset);
@@ -134,7 +134,7 @@ public class VStageMain extends InputListener {
         mainStage.addActor(buttonClose);
         
         groupNext = new Group();
-        ImageButton buttonNext = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-return-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-return"));
+        ImageButton buttonNext = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-next-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-next"));
         buttonNext.setSize(buttonIconSize, buttonIconSize);          
         buttonNext.setName("BUTTON_NEXT");
         buttonNext.setPosition(swidth - buttonIconSize - buttonOffset, buttonOffset);
@@ -147,14 +147,14 @@ public class VStageMain extends InputListener {
         labelButtonNext.setPosition(labelx, labely);        
         groupNext.addActor(labelButtonNext);
         
-        ImageButton buttonZoomIn = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic"));
+        ImageButton buttonZoomIn = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomin-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomin"));
         buttonZoomIn.setSize(buttonIconSize, buttonIconSize);          
         buttonZoomIn.setName("BUTTON_ZOOM_IN");
         buttonZoomIn.setPosition(swidth - buttonIconSize - buttonOffset, sheight - buttonIconSize - buttonOffset);
         buttonZoomIn.addListener(this); 
         groupNext.addActor(buttonZoomIn);
         
-        ImageButton buttonZoomOut = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-generic"));
+        ImageButton buttonZoomOut = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomout-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomout"));
         buttonZoomOut.setSize(buttonIconSize, buttonIconSize);          
         buttonZoomOut.setName("BUTTON_ZOOM_OUT");
         buttonZoomOut.setPosition(buttonOffset, sheight - buttonIconSize - buttonOffset);
