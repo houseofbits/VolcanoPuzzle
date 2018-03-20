@@ -43,6 +43,8 @@ public class VStageMain extends InputListener {
     
     final float selectorTableWidth = 650;
     
+    boolean puzzleComplete = false;
+    
 	public VStageMain(VMain v){
 		volcano = v;
 	}
@@ -177,7 +179,7 @@ public class VStageMain extends InputListener {
 	
 	public void onPuzzleComplete(){
 		groupNext.setVisible(true);
-		//TODO Show animation
+		puzzleComplete = true;
 	}
 	
 	public boolean isLocked(){
@@ -196,24 +198,21 @@ public class VStageMain extends InputListener {
 			selectorTable.addAction(Actions.sequence(Actions.touchable(Touchable.disabled),
 														Actions.fadeOut(0.4f), 
 														Actions.hide()));		
-			
 			buttonClose.addAction(Actions.sequence(Actions.touchable(Touchable.disabled),
 													Actions.moveTo(buttonOffset, buttonOffset, 0.4f, Interpolation.swingIn),
 													Actions.fadeOut(0.3f),
 													Actions.hide()
 													));
-
 			buttonMain.addAction(Actions.sequence(Actions.delay(0.4f),
 					Actions.show(),
 					Actions.fadeIn(0.3f),
 					Actions.touchable(Touchable.enabled)
-					));					
-													
+					));
+			if(puzzleComplete)groupNext.setVisible(true);										
 		}else{
 			selectorTable.addAction(Actions.sequence(Actions.show(), 
 														Actions.fadeIn(0.4f), 
 														Actions.touchable(Touchable.enabled)));						
-
 			buttonClose.addAction(Actions.sequence(Actions.show(),
 													Actions.fadeIn(0.3f),
 													Actions.moveTo(buttonCloseCenterX, buttonOffset, 0.4f, Interpolation.swingIn),
@@ -222,8 +221,8 @@ public class VStageMain extends InputListener {
 			buttonMain.addAction(Actions.sequence(Actions.touchable(Touchable.disabled),
 					Actions.fadeOut(0.3f),
 					Actions.hide()			
-					));			
-	
+					));
+			groupNext.setVisible(false);
 		}
 	}
 	public void toggleSelectorTable(){
@@ -242,6 +241,7 @@ public class VStageMain extends InputListener {
 		if(a.getName().compareTo("BUTTON_NEXT") == 0){
 			volcano.generateNewPuzzle(getSelectedDifficulty(), -1);
 			groupNext.setVisible(false);
+			puzzleComplete = false;
 		}	
 		if(a.getName().contains("BUTTON_DIFF")){
 			int idx = getSelectedDifficulty();
@@ -249,6 +249,7 @@ public class VStageMain extends InputListener {
 				volcano.generateNewPuzzle(getSelectedDifficulty(), volcano.currentImage);
 				groupNext.setVisible(false);
 				currentDifficultyLevelIndex = idx;
+				puzzleComplete = false;
 			}
 		}
 		if(a.getName().compareTo("BUTTON_ZOOM_IN") == 0){
