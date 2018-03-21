@@ -11,6 +11,10 @@ varying vec4 v_positionLightTrans;
 varying vec4 v_projectedPos;
 uniform mat4 u_lightTrans;
 
+attribute vec3 a_normal;
+uniform mat3 u_normalMatrix;
+varying vec3 v_normal;
+
 void main() {
 	
 	v_position = u_worldTrans * vec4(a_position, 1.0);
@@ -18,6 +22,8 @@ void main() {
 	v_projectedPos = u_projViewTrans * v_position;
 	
 	v_positionLightTrans = u_lightTrans * v_position;
+
+	v_normal = normalize(u_normalMatrix * a_normal);
 
 	v_diffuseUV = u_diffuseUVTransform.xy + a_texCoord0 * u_diffuseUVTransform.zw;
 	vec4 pos = u_worldTrans * vec4(a_position, 1.0);

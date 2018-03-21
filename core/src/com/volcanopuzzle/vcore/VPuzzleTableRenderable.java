@@ -46,7 +46,7 @@ public class VPuzzleTableRenderable {
         modelDepthBatch = new ModelBatch(volcano.depthShader);
         modelInstance = new ModelInstance(buildTable());
         
-        diffuseTexture = new Texture(Gdx.files.internal("tableBg.png"));
+        diffuseTexture = new Texture(Gdx.files.internal("tableBg2.png"));
         
         diffuseTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         

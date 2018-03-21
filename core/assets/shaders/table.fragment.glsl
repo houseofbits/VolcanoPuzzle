@@ -9,6 +9,7 @@ uniform vec3 u_lightPosition;
 varying vec4 v_position; 
 varying vec4 v_positionLightTrans;
 varying vec4 v_projectedPos;
+varying vec3 v_normal;
 
 vec4 boxBlur (sampler2D source, vec2 uv, float offset) {
 
@@ -64,7 +65,16 @@ void main() {
 	float shadow = 0.0;
 	float texelSize = 1.0 / 1024.0;
 	
-	float currentDepth = length(vec3(v_position.xyz - u_lightPosition))/200.0;	
+	vec3 vpos = vec3(v_position.xyz);	
+	vec3 lpos = vec3(u_lightPosition);		
+	vec3 lightDir = vpos - lpos;
+	
+	float currentDepth = length(lightDir)/200.0;	
+	
+	lightDir = normalize(lightDir);
+	
+	//float bias2 = max(0.03 * currentDepth, 0.005);  
+	
 	float bias = 0.005;
 	
 	float shade = (1.0 - currentDepth);
@@ -87,5 +97,9 @@ void main() {
 
 	gl_FragColor = finalColor;
 	
-	//gl_FragColor = vec4(vec3(pow(shade+0.5, 4)), 1);
+//	float dpd = texture2D(u_ambientTexture, projCoords.xy).r;
+	
+//	gl_FragColor = vec4(vec3(currentDepth - bias2 > dpd), 1);
+	
+//	gl_FragColor = vec4(vec3(bias2), 1);
 }

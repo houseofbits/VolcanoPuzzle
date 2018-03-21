@@ -79,7 +79,7 @@ public class VPuzzlePieceRenderable {
     		
     		Vector3 dst = translation.cpy().sub(startPosition); 
     		float l = dst.len();
-    		if(l <= 0.1f){
+    		if(l <= 0.5f){
     			setTransferToInitialPosition = false;
     		}else{
     			
