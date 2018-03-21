@@ -1,5 +1,6 @@
 package com.volcanopuzzle.vcore;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Mesh;
@@ -29,6 +30,7 @@ public class VPuzzleTableRenderable {
 	protected ModelBatch modelBatch = null;
 	protected ModelBatch modelDepthBatch = null;
 	protected ModelInstance modelInstance = null;	
+	protected Texture	diffuseTexture;
 	
 	public Vector3 imageBackgroundSize = new Vector3(1,1,1);
 	
@@ -44,8 +46,14 @@ public class VPuzzleTableRenderable {
         modelDepthBatch = new ModelBatch(volcano.depthShader);
         modelInstance = new ModelInstance(buildTable());
         
+        diffuseTexture = new Texture(Gdx.files.internal("tableBg.png"));
+        
+        diffuseTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        
         setImageBackgroundSize(330,200);
 
+        setReflectionTexture(null, diffuseTexture);
+        
         setLightDepthTexture(null, volcano.lightDepthTexture.get());
 	}
     public void render(PerspectiveCamera cam, Environment env){
@@ -83,7 +91,10 @@ public class VPuzzleTableRenderable {
     }
     public void setLightDepthTexture(String id, Texture texture){
     	setNodeMaterialAttribute(id, new TextureAttribute(TextureAttribute.Ambient, texture));
-    }    
+    }   
+    public void setReflectionTexture(String id, Texture texture){
+    	setNodeMaterialAttribute(id, new TextureAttribute(TextureAttribute.Reflection, texture));
+    }      
     public void setNodeMaterialAttribute(String id, Attribute attr){
     	Node n = getNode(id);
     	if(n!=null){
@@ -128,7 +139,8 @@ public class VPuzzleTableRenderable {
 	    modelBuilder.part("piece",
 	            mesh1,
 	            GL30.GL_TRIANGLE_STRIP,
-	            new Material(ColorAttribute.createDiffuse(Color.WHITE)));
+	            new Material(ColorAttribute.createDiffuse(Color.WHITE),
+	            			ColorAttribute.createReflection(1, 1, 1, 1)));
 	    		//new Material(ColorAttribute.createDiffuse(new Color((int)(Math.random() * 16777215)))));		
 		
 	    Model model = modelBuilder.end(); 

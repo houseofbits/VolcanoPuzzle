@@ -8,12 +8,14 @@ varying vec2 v_diffuseUV;
 
 varying vec4 v_position; 
 varying vec4 v_positionLightTrans;
-
+varying vec4 v_projectedPos;
 uniform mat4 u_lightTrans;
 
 void main() {
 	
 	v_position = u_worldTrans * vec4(a_position, 1.0);
+
+	v_projectedPos = u_projViewTrans * v_position;
 	
 	v_positionLightTrans = u_lightTrans * v_position;
 

@@ -132,7 +132,7 @@ public class VPuzzlePieceRenderable {
             pieceModelInstance.calculateTransforms();
             getTranslation();
             //translation + piece height
-            surfacePlane.set(new Vector3(0, translation.y + 5, 0), new Vector3(0,1,0));
+            surfacePlane.set(new Vector3(0, translation.y + 1, 0), new Vector3(0,1,0));
         }
     }
     public Vector3 getTranslation(){

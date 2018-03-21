@@ -1,15 +1,14 @@
 varying vec2 v_diffuseUV;
 
-uniform sampler2D u_diffuseTexture;
-uniform sampler2D u_ambientTexture;
-
-//vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV);
+uniform sampler2D u_diffuseTexture;				//Puzzle image
+uniform sampler2D u_reflectionTexture;			//Base naterial
+uniform sampler2D u_ambientTexture;				//Shadow depth
 
 uniform vec3 u_lightPosition;
 
 varying vec4 v_position; 
 varying vec4 v_positionLightTrans;
-
+varying vec4 v_projectedPos;
 
 vec4 boxBlur (sampler2D source, vec2 uv) {
 
@@ -44,9 +43,23 @@ vec4 boxBlur (sampler2D source, vec2 uv) {
 
 void main() {
 	
-	vec4 img  = boxBlur(u_diffuseTexture, v_diffuseUV);
+	//Projection UVs for reflection and refraction
+	vec2 ndc = (v_projectedPos.xy / v_projectedPos.w)/2.0 + 0.5;
+//	vec2 refractionUV = vec2(ndc.x, ndc.y);
+	vec2 projectedUV = vec2(ndc.x, 1.0-ndc.y);	
 	
-	vec4 finalColor = mix(img, vec4(0.3,0.3,0.3,1), 0.7);
+	
+	vec4 blend  = boxBlur(u_diffuseTexture, (projectedUV*0.8)+vec2(0.1,0.1));
+	vec4 source = texture2D(u_reflectionTexture, projectedUV);
+	vec4 blendResult = vec4(1);
+	float l = length(blend);
+	if(l <= 0.5){
+		blendResult = (1 - (1-source) * (1-(blend-0.5)));
+	}else{
+		blendResult = (source * (blend+0.5));
+	}
+	
+	vec4 finalColor = blendResult;
 	
 	float shadow = 0.0;
 	float texelSize = 1.0 / 1024.0;
@@ -70,7 +83,7 @@ void main() {
 
 	
 
-	finalColor.rgb *= (1.0 - shadow) * pow(shade+0.6, 6);	//pow(shade, 0.5);
+	finalColor.rgb *= (1.0 - shadow);// * pow(shade+0.6, 6);	//pow(shade, 0.5);
 
 	gl_FragColor = finalColor;
 	
