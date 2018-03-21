@@ -161,7 +161,8 @@ public class VStageMain extends InputListener {
         buttonZoomOut.addListener(this);   
         groupNext.addActor(buttonZoomOut);
         
-        groupNext.setVisible(false);
+        //groupNext.setVisible(false);
+        setNextGroupVisibility(false);
         
         mainStage.addActor(groupNext);
         
@@ -177,8 +178,24 @@ public class VStageMain extends InputListener {
 
 	}
 	
+	public void setNextGroupVisibility(boolean visible){
+		if(!visible){
+			groupNext.addAction(Actions.sequence(
+						Actions.show(),
+						Actions.fadeOut(0.5f),
+						Actions.hide()
+					));
+		}else{
+			groupNext.addAction(Actions.sequence(
+					Actions.show(),
+					Actions.fadeIn(0.5f)
+				));
+		}
+	}
+	
 	public void onPuzzleComplete(){
-		groupNext.setVisible(true);
+//		groupNext.setVisible(true);
+		setNextGroupVisibility(true);
 		puzzleComplete = true;
 	}
 	
@@ -208,7 +225,7 @@ public class VStageMain extends InputListener {
 					Actions.fadeIn(0.3f),
 					Actions.touchable(Touchable.enabled)
 					));
-			if(puzzleComplete)groupNext.setVisible(true);										
+			if(puzzleComplete)setNextGroupVisibility(true);//groupNext.setVisible(true);										
 		}else{
 			selectorTable.addAction(Actions.sequence(Actions.show(), 
 														Actions.fadeIn(0.4f), 
@@ -222,7 +239,8 @@ public class VStageMain extends InputListener {
 					Actions.fadeOut(0.3f),
 					Actions.hide()			
 					));
-			groupNext.setVisible(false);
+			//groupNext.setVisible(false);
+			setNextGroupVisibility(false);
 		}
 	}
 	public void toggleSelectorTable(){
@@ -240,14 +258,16 @@ public class VStageMain extends InputListener {
 		}		
 		if(a.getName().compareTo("BUTTON_NEXT") == 0){
 			volcano.generateNewPuzzle(getSelectedDifficulty(), -1);
-			groupNext.setVisible(false);
+			//groupNext.setVisible(false);
+			setNextGroupVisibility(false);
 			puzzleComplete = false;
 		}	
 		if(a.getName().contains("BUTTON_DIFF")){
 			int idx = getSelectedDifficulty();
 			if(idx != currentDifficultyLevelIndex){
 				volcano.generateNewPuzzle(getSelectedDifficulty(), volcano.currentImage);
-				groupNext.setVisible(false);
+				//groupNext.setVisible(false);
+				setNextGroupVisibility(false);
 				currentDifficultyLevelIndex = idx;
 				puzzleComplete = false;
 			}

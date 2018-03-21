@@ -10,9 +10,9 @@ varying vec4 v_position;
 varying vec4 v_positionLightTrans;
 varying vec4 v_projectedPos;
 
-vec4 boxBlur (sampler2D source, vec2 uv) {
+vec4 boxBlur (sampler2D source, vec2 uv, float offset) {
 
-	vec2 texOffset = vec2(0.004, 0.004);
+	vec2 texOffset = vec2(offset, offset);
 	
 	vec2 tc0 = uv.st + vec2(-texOffset.s, -texOffset.t);
 	vec2 tc1 = uv.st + vec2(         0.0, -texOffset.t);
@@ -43,13 +43,13 @@ vec4 boxBlur (sampler2D source, vec2 uv) {
 
 void main() {
 	
-	//Projection UVs for reflection and refraction
 	vec2 ndc = (v_projectedPos.xy / v_projectedPos.w)/2.0 + 0.5;
-//	vec2 refractionUV = vec2(ndc.x, ndc.y);
 	vec2 projectedUV = vec2(ndc.x, 1.0-ndc.y);	
 	
-	
-	vec4 blend  = boxBlur(u_diffuseTexture, (projectedUV*0.8)+vec2(0.1,0.1));
+	vec4 blend  = boxBlur(u_diffuseTexture, (projectedUV*0.8)+vec2(0.1,0.1), 0.012) 
+				+ boxBlur(u_diffuseTexture, (projectedUV*0.8)+vec2(0.1,0.1), 0.01)
+				+ boxBlur(u_diffuseTexture, (projectedUV*0.8)+vec2(0.1,0.1), 0.007);
+	blend = blend * 0.33;
 	vec4 source = texture2D(u_reflectionTexture, projectedUV);
 	vec4 blendResult = vec4(1);
 	float l = length(blend);
