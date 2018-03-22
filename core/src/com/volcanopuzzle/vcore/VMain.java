@@ -99,19 +99,19 @@ public class VMain {
 
 		lightView = new PerspectiveCamera(90, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		lightView.near = 1f;
-		lightView.far = 200;
+		lightView.far = 300;
 
 		Quaternion q = new Quaternion();
-		q.setEulerAngles(180, 110, 0.0f);
+		q.setEulerAngles(180, 100, 0.0f);
 
 		Vector3 nm = new Vector3(0, 0, 1);
 		nm = q.transform(nm).nor();
 		lightView.direction.set(nm);
-		nm.scl(100);
+		nm.scl(90);
 
-		lightView.position.set(new Vector3(0, 0, 0).sub(nm));
+		lightView.position.set(new Vector3(0, 0, -50).sub(nm));
 		lightView.up.set(0, -1, 0);
-		lightView.fieldOfView = 100;
+		lightView.fieldOfView = 105;
 		lightView.update();
 	}
 
@@ -132,6 +132,9 @@ public class VMain {
 		// VCommon.drawGrid(camera.get());
 
 		tableRenderable.render(camera.get(), environment);
+		//tableRenderable.render(lightView, environment);
+		
+		
 		backgroundRenderable.render(camera.get(), environment);
 		for (int i = 0; i < puzzlePieces.size; i++) {
 			puzzlePieces.get(i).render(camera.get(), environment);
@@ -225,7 +228,7 @@ public class VMain {
 
 	Texture getPuzzleTexture(int idx) {
 
-		String filename = "img" + idx + ".png";
+		String filename = "images/img" + idx + ".png";
 
 		if (!assetsManager.isLoaded(filename)) {
 			assetsManager.load(filename, Texture.class);

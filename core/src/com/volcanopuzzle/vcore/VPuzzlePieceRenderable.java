@@ -79,7 +79,7 @@ public class VPuzzlePieceRenderable {
     		
     		Vector3 dst = translation.cpy().sub(startPosition); 
     		float l = dst.len();
-    		if(l <= 0.5f){
+    		if(l <= 1f){
     			setTransferToInitialPosition = false;
     		}else{
     			
@@ -89,7 +89,9 @@ public class VPuzzlePieceRenderable {
     			
 	    		dst.scl(dt * transferVelocity);
 	    		
-	    		transferVelocity += 40 * dt;
+	    		transferVelocity += l * dt;
+	    		
+	    		if(transferVelocity > l)transferVelocity = l;
 	    		
 	    		translate(translation.sub(dst));
     		}	

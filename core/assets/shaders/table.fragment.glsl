@@ -42,6 +42,10 @@ vec4 boxBlur (sampler2D source, vec2 uv, float offset) {
 	return vec4(sum.rgb, 1.0);	            
 }
 
+float DecodeFloatRGBA( vec4 rgba ) {
+  return dot( rgba, vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) );
+}
+
 void main() {
 	
 	vec2 ndc = (v_projectedPos.xy / v_projectedPos.w)/2.0 + 0.5;
@@ -63,19 +67,19 @@ void main() {
 	vec4 finalColor = blendResult;
 	
 	float shadow = 0.0;
-	float texelSize = 1.0 / 1024.0;
+	float texelSize = 1.0 / 500;//1024.0;
 	
 	vec3 vpos = vec3(v_position.xyz);	
 	vec3 lpos = vec3(u_lightPosition);		
 	vec3 lightDir = vpos - lpos;
 	
-	float currentDepth = length(lightDir)/200.0;	
+	float currentDepth = length(lightDir)/300.0;	
 	
 	lightDir = normalize(lightDir);
 	
-	//float bias2 = max(0.03 * currentDepth, 0.005);  
+	float bias2 = max(0.01 * currentDepth, 0.001);  
 	
-	float bias = 0.005;
+	float bias = 0.002;
 	
 	float shade = (1.0 - currentDepth);
 	
@@ -85,7 +89,8 @@ void main() {
 	{
 	    for(int y = -1; y <= 1; ++y)
 	    {	
-	        float pcfDepth = texture2D(u_ambientTexture, projCoords.xy + vec2(x, y) * texelSize).r; 
+	        vec4 vdpth = texture2D(u_ambientTexture, projCoords.xy + vec2(x, y) * texelSize); 	        
+	        float pcfDepth = DecodeFloatRGBA(vdpth);	        
 	        shadow += currentDepth - bias > pcfDepth ? 0.6 : 0.0;        
 	    }    
 	}	
@@ -93,13 +98,16 @@ void main() {
 
 	
 
-	finalColor.rgb *= (1.0 - shadow);// * pow(shade+0.6, 6);	//pow(shade, 0.5);
+	finalColor.rgb *= (1.0 - shadow);	// * pow(shade+0.6, 6);	//pow(shade, 0.5);
 
 	gl_FragColor = finalColor;
+
 	
-//	float dpd = texture2D(u_ambientTexture, projCoords.xy).r;
+	//vec4 dpd = texture2D(u_ambientTexture, projCoords.xy);
 	
-//	gl_FragColor = vec4(vec3(currentDepth - bias2 > dpd), 1);
+	//float dpth = DecodeFloatRGBA(dpd);
 	
-//	gl_FragColor = vec4(vec3(bias2), 1);
+	//gl_FragColor = vec4(vec3(currentDepth - 0.002 > dpth), 1);
+	
+	//gl_FragColor = vec4(vec3(dpth), 1);
 }
