@@ -71,33 +71,50 @@ void main() {
 	
 	vec3 vpos = vec3(v_position.xyz);	
 	vec3 lpos = vec3(u_lightPosition);		
-	vec3 lightDir = vpos - lpos;
-	
+	vec3 lightDir = vpos - lpos;	
 	float currentDepth = length(lightDir)/300.0;	
-	
-	lightDir = normalize(lightDir);
-	
-	float bias2 = max(0.01 * currentDepth, 0.001);  
-	
-	float bias = 0.002;
+//	float bias = 0.002;
 	
 	float shade = (1.0 - currentDepth);
 	
 	vec3 projCoords = (v_positionLightTrans.xyz / v_positionLightTrans.w)*0.5+0.5;
 	
+	vec3 N = normalize(v_normal);
+	vec3 L = normalize(lightDir);
+	float dotl = dot(N,L);
+	float bias2 = (texelSize * dotl) + (texelSize * 4 * currentDepth);  
+	
 	for(int x = -1; x <= 1; ++x)
 	{
 	    for(int y = -1; y <= 1; ++y)
 	    {	
-	        vec4 vdpth = texture2D(u_ambientTexture, projCoords.xy + vec2(x, y) * texelSize); 	        
+	    	vec2 c = projCoords.xy + vec2(x, y) * texelSize;
+	    	//c = clamp(c, 0,1);
+	    	
+	        vec4 vdpth = texture2D(u_ambientTexture, c);
 	        float pcfDepth = DecodeFloatRGBA(vdpth);	        
-	        shadow += currentDepth - bias > pcfDepth ? 0.6 : 0.0;        
+	        shadow += currentDepth - bias2 > pcfDepth ? 0.6 : 0.0;        
 	    }    
 	}	
 	shadow /= 9.0;
 
+	//////////////////////// test shadows //////////////////////////	
+	/*
+	shadow = 0;
+	vec2 offst = vec2(0, 1);
+    vec4 vdpth = texture2D(u_ambientTexture, projCoords.xy + (offst * texelSize));
+    float pcfDepth = DecodeFloatRGBA(vdpth);
 	
-
+	vec3 N = normalize(v_normal);
+	vec3 L = normalize(lightDir);
+	float dotl = dot(N,L);
+		
+	float bias2 = (texelSize * dotl) + (0.006 * currentDepth);	//max(0.006 * (1.0 - currentDepth), 0.001);  	
+    
+	shadow += currentDepth - bias2 > pcfDepth ? 1.0 : 0.0;
+	*/
+	////////////////////////////////////////////////////////////////
+	
 	finalColor.rgb *= (1.0 - shadow);	// * pow(shade+0.6, 6);	//pow(shade, 0.5);
 
 	gl_FragColor = finalColor;
@@ -107,7 +124,7 @@ void main() {
 	
 	//float dpth = DecodeFloatRGBA(dpd);
 	
-	//gl_FragColor = vec4(vec3(currentDepth - 0.002 > dpth), 1);
+	//gl_FragColor = vec4(vec3(currentDepth - bias > dpth), 1);
 	
-	//gl_FragColor = vec4(vec3(dpth), 1);
+//	gl_FragColor = vec4(vec3(shadow), 1);
 }

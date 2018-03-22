@@ -82,10 +82,10 @@ public class VMain {
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.5f, 1f));
 		environment.add(new DirectionalLight().set(0.9f, 0.9f, 0.5f, -1, -0.8f, 1));
 
-		// Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage,
-		// camController, inputProcessor));
-		Gdx.input.setInputProcessor(
-				new InputMultiplexer(mainStage.mainStage, inputProcessor.gestureDetector, inputProcessor));
+//		CameraInputController camController  = new CameraInputController(camera.get());		
+//		 Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage,camController, inputProcessor));
+
+		 Gdx.input.setInputProcessor(new InputMultiplexer(mainStage.mainStage, inputProcessor.gestureDetector, inputProcessor));
 
 		backgroundRenderable = new VPuzzleBackgroundRenderable(this);
 		tableRenderable = new VPuzzleTableRenderable(this);
@@ -195,7 +195,7 @@ public class VMain {
 
 		// mainStage.puzzleCurrentImageIndex = r;
 
-		float maxWidth = 400, maxHeight = 100;
+		float maxWidth = 600, maxHeight = 100;
 		float imageScale = Math.min(maxWidth / texture.getWidth(), maxHeight / texture.getHeight());
 		Vector2 size = new Vector2(texture.getWidth() * imageScale, texture.getHeight() * imageScale);
 

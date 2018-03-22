@@ -21,7 +21,7 @@ void main() {
 
 	v_projectedPos = u_projViewTrans * v_position;
 	
-	v_positionLightTrans = u_lightTrans * v_position;
+	v_positionLightTrans = u_lightTrans * vec4(v_position.xyz, 1.0);
 
 	v_normal = normalize(u_normalMatrix * a_normal);
 

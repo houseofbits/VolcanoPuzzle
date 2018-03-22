@@ -21,7 +21,7 @@ public class VCommon {
 	
 	public static void drawTextLine(String text, float x, float y){
 		spriteBatch.begin();	
-	//	VStaticAssets.Fonts.calibri18Font.draw(spriteBatch, text, x, y);
+		VStaticAssets.Fonts.calibri18Font.draw(spriteBatch, text, x, y);
 		spriteBatch.end();
 	}
 	

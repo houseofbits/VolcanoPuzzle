@@ -28,14 +28,19 @@ public class VPuzzleTableRenderable {
 	public VMain	volcano;
 	
 	protected ModelBatch modelBatch = null;
+	protected ModelBatch modelBatchInfo = null;
 	protected ModelBatch modelDepthBatch = null;
-	protected ModelInstance modelInstance = null;	
+	protected ModelInstance modelTableInst = null;	
+	
+	protected ModelInstance modelTitleInst = null;	
+	protected ModelInstance modelFooterInst = null;	
+	
 	protected Texture	diffuseTexture;
 	
 	public Vector3 imageBackgroundSize = new Vector3(1,1,1);
 	
 	public void setImageBackgroundSize(float x, float y){
-		modelInstance.transform.idt().scale(x, 1, y);
+		modelTableInst.transform.idt().scale(x, 1, y);
 	}
 	
 	public VPuzzleTableRenderable(VMain v){
@@ -43,8 +48,12 @@ public class VPuzzleTableRenderable {
 		volcano = v;
 		
         modelBatch = new ModelBatch(volcano.tableShader);
+        modelBatchInfo = new ModelBatch();
         modelDepthBatch = new ModelBatch(volcano.depthShader);
-        modelInstance = new ModelInstance(buildTable());
+        modelTableInst = new ModelInstance(buildRect(-1.2f));
+
+        modelTitleInst = new ModelInstance(buildRect(-1.0f));        
+        modelFooterInst = new ModelInstance(buildRect(-1.0f));
         
         diffuseTexture = new Texture(Gdx.files.internal("tableBg2.png"));
         
@@ -55,22 +64,35 @@ public class VPuzzleTableRenderable {
         setReflectionTexture(null, diffuseTexture);
         
         setLightDepthTexture(null, volcano.lightDepthTexture.get());
+        
+        modelTitleInst.transform.translate(0, 0, -70);
+        modelTitleInst.transform.scale(170, 1, 40);
+
+        modelFooterInst.transform.translate(0, 0, 70);
+        modelFooterInst.transform.scale(170, 1, 30);        
+        
 	}
     public void render(PerspectiveCamera cam, Environment env){
     	
     	modelBatch.begin(cam);
-        if(modelInstance != null){
-        	modelBatch.render(modelInstance, env);
+        if(modelTableInst != null){
+        	modelBatch.render(modelTableInst, env);
         }
         modelBatch.end();       
+    	
+    	modelBatchInfo.begin(cam);
+    	modelBatchInfo.render(modelTitleInst, env);
+    	modelBatchInfo.render(modelFooterInst, env);
+    	modelBatchInfo.end();
+        
     }
     public void renderDepth(PerspectiveCamera cam, Environment env){
         modelDepthBatch.begin(cam);
-        if(modelInstance != null){
-        	modelDepthBatch.render(modelInstance, env);
+        if(modelTableInst != null){
+        	modelDepthBatch.render(modelTableInst, env);
         }
         modelDepthBatch.end();   
-    }    
+    }        
     public void setTransparency(String id, float f){    
     	BlendingAttribute b = new BlendingAttribute(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 		b.opacity = f;
@@ -104,23 +126,21 @@ public class VPuzzleTableRenderable {
     	}
     }
     public Node getNode(String id){
-    	if(id != null && id.length() > 0)return modelInstance.getNode(id, true);
-    	else return modelInstance.nodes.get(0);
+    	if(id != null && id.length() > 0)return modelTableInst.getNode(id, true);
+    	else return modelTableInst.nodes.get(0);
     }     
     //TODO Disposing of renderables
 	public void dispose(){
 		modelBatch.dispose();
 	}
 	
-	private Model buildTable(){
+	private Model buildRect(float y){
 		
 		MeshBuilder meshBuilder = new MeshBuilder();
 		
 		//Top face
-		meshBuilder.begin(Usage.Position | Usage.TextureCoordinates);		
+		meshBuilder.begin(Usage.Position | Usage.TextureCoordinates);
 		meshBuilder.part("piece", GL30.GL_TRIANGLE_STRIP);
-			
-		float y = -1.2f;
 		
 		short idx = meshBuilder.vertex(new Vector3(-0.5f, y, -0.5f), new Vector3(0,1,0), new Color(), new Vector2(0, 0));
 		meshBuilder.index(idx);		
@@ -141,7 +161,6 @@ public class VPuzzleTableRenderable {
 	            GL30.GL_TRIANGLE_STRIP,
 	            new Material(ColorAttribute.createDiffuse(Color.WHITE),
 	            			ColorAttribute.createReflection(1, 1, 1, 1)));
-	    		//new Material(ColorAttribute.createDiffuse(new Color((int)(Math.random() * 16777215)))));		
 		
 	    Model model = modelBuilder.end(); 
 	    
