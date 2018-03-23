@@ -134,7 +134,6 @@ public class VMain {
 		tableRenderable.render(camera.get(), environment);
 		//tableRenderable.render(lightView, environment);
 		
-		
 		backgroundRenderable.render(camera.get(), environment);
 		for (int i = 0; i < puzzlePieces.size; i++) {
 			puzzlePieces.get(i).render(camera.get(), environment);

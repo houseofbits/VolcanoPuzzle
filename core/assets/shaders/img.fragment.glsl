@@ -9,8 +9,7 @@ uniform vec3 u_lightPosition;
 
 varying vec4 v_position; 
 varying vec4 v_positionLightTrans;
-
-varying vec3 v_normal;
+//varying vec3 v_normal;
 
 vec4 boxBlur (sampler2D source, vec2 uv, float offset) {
 
@@ -50,8 +49,26 @@ vec4 boxBlur (sampler2D source, vec2 uv, float offset) {
 	return vec4(sum.rgb, 1.0);	            
 }
 
-float DecodeFloatRGBA( vec4 rgba ) {
+float decodeFloatRGBA( vec4 rgba ) {
   return dot( rgba, vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) );
+}
+float shadowComponent(sampler2D depthMap, vec3 lightPos, vec3 vPos, vec4 vLightSpace, vec3 normal){
+	float shadow = 0.0;
+	float texelSize = 1.0 / 500;	//1024.0;
+	vec3 lightDir = vPos - lightPos;
+	float currentDepth = length(lightDir)/300.0;		
+	vec3 projCoords = (vLightSpace.xyz / vLightSpace.w)*0.5+0.5;
+	float dotl = dot(normal, normalize(lightDir));
+	float bias = (texelSize * dotl) + (texelSize * 4 * currentDepth);  
+	for(int x = -1; x <= 1; ++x){
+	    for(int y = -1; y <= 1; ++y){	
+	        vec4 vdpth = texture2D(depthMap, projCoords.xy + vec2(x, y) * texelSize);
+	        float pcfDepth = decodeFloatRGBA(vdpth);	        
+	        shadow += currentDepth - bias > pcfDepth ? 0.6 : 0.0;        
+	    }    
+	}	
+	shadow /= 9.0;
+	return shadow;
 }
 
 void main() {
@@ -60,45 +77,15 @@ void main() {
 	img  += boxBlur(u_diffuseTexture, v_diffuseUV, 0.005);
 	img = img * 0.5;
 	
-	
 	float gray = (img.r + img.g + img.b) / 3.0;
 	
 	img = vec4(vec3(gray * 2), 1);
 	
 	vec4 finalColor = mix(img, vec4(0.3,0.3,0.3,1), 0.7);
 	
-	float shadow = 0.0;
-	float texelSize = 1.0 / 500;//1024.0;
-	
-	vec3 vpos = vec3(v_position.xyz);	
-	vec3 lpos = vec3(u_lightPosition);		
-	vec3 lightDir = vpos - lpos;	
-	float currentDepth = length(lightDir)/300.0;		
-	
-//	float currentDepth = length(vec3(v_position.xyz - u_lightPosition))/300.0;	
-//	float bias = 0.002;
-	
-	vec3 projCoords = (v_positionLightTrans.xyz / v_positionLightTrans.w)*0.5+0.5;
-	
-	//float bias2 = max(0.01 * currentDepth, 0.001);  
-	
-	vec3 N = normalize(v_normal);
-	vec3 L = normalize(lightDir);
-	float dotl = dot(N,L);
-	float bias2 = (texelSize * dotl) + (texelSize * 4 * currentDepth);  	
-	
-	for(int x = -1; x <= 1; ++x)
-	{
-	    for(int y = -1; y <= 1; ++y)
-	    {	
-	        vec4 vdpth = texture2D(u_ambientTexture, projCoords.xy + vec2(x, y) * texelSize); 	        
-	        float pcfDepth = DecodeFloatRGBA(vdpth);	        
-	        shadow += currentDepth - bias2 > pcfDepth ? 0.6 : 0.0;       
-	    }    
-	}	
-	shadow /= 9.0;
+	float shadow = 1.0 - shadowComponent(u_ambientTexture, u_lightPosition, v_position.xyz, v_positionLightTrans, vec3(0,0,1));
 
-	finalColor.rgb *= (1.0 - shadow);
+	finalColor.rgb *= shadow;
 
 	gl_FragColor = finalColor;
 }

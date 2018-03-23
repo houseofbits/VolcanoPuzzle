@@ -79,11 +79,11 @@ public class VPuzzleTableRenderable {
         	modelBatch.render(modelTableInst, env);
         }
         modelBatch.end();       
-    	
-    	modelBatchInfo.begin(cam);
-    	modelBatchInfo.render(modelTitleInst, env);
-    	modelBatchInfo.render(modelFooterInst, env);
-    	modelBatchInfo.end();
+//    	
+//    	modelBatchInfo.begin(cam);
+//    	modelBatchInfo.render(modelTitleInst, env);
+//    	modelBatchInfo.render(modelFooterInst, env);
+//    	modelBatchInfo.end();
         
     }
     public void renderDepth(PerspectiveCamera cam, Environment env){
