@@ -39,6 +39,14 @@ public class VPuzzleTableRenderable {
 	
 	public Vector3 imageBackgroundSize = new Vector3(1,1,1);
 	
+	float targetY = 0;
+	boolean moveToY = false;	
+	Vector3 translationTmp = new Vector3();
+	Vector2	titleSize = new Vector2();
+	Vector2	footerSize = new Vector2();
+	
+//	TextureAttribute colorProjectionAttribute = new TextureAttribute(TextureAttribute.Diffuse);
+	
 	public void setImageBackgroundSize(float x, float y){
 		modelTableInst.transform.idt().scale(x, 1, y);
 	}
@@ -48,7 +56,7 @@ public class VPuzzleTableRenderable {
 		volcano = v;
 		
         modelBatch = new ModelBatch(volcano.tableShader);
-        modelBatchInfo = new ModelBatch();
+        modelBatchInfo = new ModelBatch(volcano.textShader);
         modelDepthBatch = new ModelBatch(volcano.depthShader);
         modelTableInst = new ModelInstance(buildRect(-1.2f));
 
@@ -63,27 +71,64 @@ public class VPuzzleTableRenderable {
 
         setReflectionTexture(null, diffuseTexture);
         
-        setLightDepthTexture(null, volcano.lightDepthTexture.get());
+        setLightDepthTexture(modelTableInst, volcano.lightDepthTexture.get());        
+        setLightDepthTexture(modelTitleInst, volcano.lightDepthTexture.get());
+        setLightDepthTexture(modelFooterInst, volcano.lightDepthTexture.get());       
         
-        modelTitleInst.transform.translate(0, 0, -70);
-        modelTitleInst.transform.scale(170, 1, 40);
-
-        modelFooterInst.transform.translate(0, 0, 70);
-        modelFooterInst.transform.scale(170, 1, 30);        
-        
+        setModelMaterialAttribute(modelTitleInst, new BlendingAttribute(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA));
+        setModelMaterialAttribute(modelFooterInst, new BlendingAttribute(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA));        
+	}
+	
+	public void setTitleTexture(Texture texture){
+		setModelDiffuseTexture(modelTitleInst, texture);
+		titleSize.y = 36;
+		float aspect = (float)texture.getWidth() / (float)texture.getHeight();
+		//System.out.println(texture.getWidth()+", "+texture.getHeight()+", "+);
+		titleSize.x = titleSize.y * aspect;
+		modelTitleInst.transform.idt();
+		modelTitleInst.transform.translate(0, 0, -68);
+		modelTitleInst.transform.scale(titleSize.x, 1, titleSize.y);
+	}
+	public void setFooterTexture(Texture texture){
+		setModelDiffuseTexture(modelFooterInst, texture);
+		footerSize.y = 26;
+		float aspect = (float)texture.getWidth() / (float)texture.getHeight();
+		footerSize.x = footerSize.y * aspect;
+		modelFooterInst.transform.idt();
+		modelFooterInst.transform.translate(0, 0, 65);
+		modelFooterInst.transform.scale(footerSize.x, 1, footerSize.y);		
+	}	
+	public void moveToY(float target){
+		moveToY = true;
+		targetY = target;
 	}
     public void render(PerspectiveCamera cam, Environment env){
+    	
+//    	float dt = Gdx.graphics.getDeltaTime();
+//    	
+//    	translationTmp = modelTitleInst.transform.getTranslation(translationTmp);	
+//    	if(this.moveToY){
+//    		float relY = targetY - translationTmp.y;
+//    		if(Math.abs(relY) < 0.1f){
+//    			translationTmp.y = targetY;
+//    			moveToY = false;
+//    			modelTitleInst.transform.setTranslation(translationTmp);
+//    		}else{
+//    			translationTmp.y += relY * 5 * dt;
+//    			modelTitleInst.transform.setTranslation(translationTmp);
+//    		}
+//    	}      	
     	
     	modelBatch.begin(cam);
         if(modelTableInst != null){
         	modelBatch.render(modelTableInst, env);
         }
-        modelBatch.end();       
-//    	
-//    	modelBatchInfo.begin(cam);
-//    	modelBatchInfo.render(modelTitleInst, env);
-//    	modelBatchInfo.render(modelFooterInst, env);
-//    	modelBatchInfo.end();
+        modelBatch.end();
+    	
+    	modelBatchInfo.begin(cam);
+    	modelBatchInfo.render(modelTitleInst, env);
+    	modelBatchInfo.render(modelFooterInst, env);
+    	modelBatchInfo.end();
         
     }
     public void renderDepth(PerspectiveCamera cam, Environment env){
@@ -93,27 +138,26 @@ public class VPuzzleTableRenderable {
         }
         modelDepthBatch.end();   
     }        
-    public void setTransparency(String id, float f){    
-    	BlendingAttribute b = new BlendingAttribute(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-		b.opacity = f;
-    	Node n = getNode(id);
-    	if(n!=null){
-    		for(int i=0; i<n.parts.size; i++){
-    			if(f < 0.001f)n.parts.get(i).enabled = false;
-    			else{
-    				NodePart np = n.parts.get(i);
-    				np.material.set(b);
-    				np.enabled = true;
-    			}
-    		}
-    	}		
-    } 
-    public void setDiffuseTexture(String id, Texture texture){
-    	setNodeMaterialAttribute(id, new TextureAttribute(TextureAttribute.Diffuse, texture));
+    public void setColorProjectionTexture(Texture texture){
+    	setModelMaterialAttribute(modelTableInst, new TextureAttribute(TextureAttribute.Diffuse, texture));
+    	setModelMaterialAttribute(modelTitleInst, new TextureAttribute(TextureAttribute.Reflection, texture));
+    	setModelMaterialAttribute(modelFooterInst, new TextureAttribute(TextureAttribute.Reflection, texture));
     }
     public void setLightDepthTexture(String id, Texture texture){
     	setNodeMaterialAttribute(id, new TextureAttribute(TextureAttribute.Ambient, texture));
     }   
+
+    public void setLightDepthTexture(ModelInstance inst, Texture texture){
+    	inst.materials.get(0).set(new TextureAttribute(TextureAttribute.Ambient, texture));
+    }       
+           
+	public void setModelDiffuseTexture(ModelInstance inst, Texture texture){
+		inst.materials.get(0).set(new TextureAttribute(TextureAttribute.Diffuse, texture));
+	}
+	public void setModelMaterialAttribute(ModelInstance inst, Attribute attr){
+		inst.materials.get(0).set(attr);
+	}	
+    
     public void setReflectionTexture(String id, Texture texture){
     	setNodeMaterialAttribute(id, new TextureAttribute(TextureAttribute.Reflection, texture));
     }      

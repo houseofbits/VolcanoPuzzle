@@ -1,12 +1,14 @@
 varying vec2 v_diffuseUV;
-uniform sampler2D u_diffuseTexture;
-uniform sampler2D u_ambientTexture;
-uniform vec4 u_diffuseColor;
-vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV);
+
+uniform sampler2D u_diffuseTexture;				//Puzzle image
+uniform sampler2D u_ambientTexture;				//Shadow depth
+uniform sampler2D u_reflectionTexture;				//Color projection
+
 uniform vec3 u_lightPosition;
+
 varying vec4 v_position; 
 varying vec4 v_positionLightTrans;
-//varying vec3 v_normal;
+varying vec4 v_projectedPos;
 
 float decodeFloatRGBA( vec4 rgba ) {
   return dot( rgba, vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) );
@@ -15,17 +17,15 @@ float shadowComponent(sampler2D depthMap, vec3 lightPos, vec3 vPos, vec4 vLightS
 	float shadow = 0.0;
 	float texelSize = 1.0 / 500;	//1024.0;
 	vec3 lightDir = vPos - lightPos;
-	float currentDepth = length(lightDir)/300.0;	
-	if(currentDepth > 1)return 0;	
+	float currentDepth = length(lightDir)/300.0;		
 	vec3 projCoords = (vLightSpace.xyz / vLightSpace.w)*0.5+0.5;
-	if(projCoords.y < 0)return 0;
 	float dotl = dot(normal, normalize(lightDir));
 	float bias = (texelSize * dotl) + (texelSize * 4 * currentDepth);  
 	for(int x = -1; x <= 1; ++x){
 	    for(int y = -1; y <= 1; ++y){	
 	        vec4 vdpth = texture2D(depthMap, projCoords.xy + vec2(x, y) * texelSize);
 	        float pcfDepth = decodeFloatRGBA(vdpth);	        
-	        shadow += currentDepth - bias > pcfDepth ? 0.6 : 0.0;        
+	        shadow += currentDepth - bias > pcfDepth ? 0.7 : 0.0;        
 	    }    
 	}	
 	shadow /= 9.0;
@@ -33,20 +33,21 @@ float shadowComponent(sampler2D depthMap, vec3 lightPos, vec3 vPos, vec4 vLightS
 }
 
 void main() {
-
-	vec4 finalColor = vec4(diffuse.rgb,1);
-
-	vec3 vpos = vec3(v_position.xyz);	
-	vec3 lpos = vec3(u_lightPosition);		
-	vec3 lightDir = vpos - lpos;	
-	float currentDepth = length(lightDir)/300.0;	
+	vec2 ndc = (v_projectedPos.xy / v_projectedPos.w)/2.0 + 0.5;
+	vec2 projectedUV = vec2(ndc.x, 1.0-ndc.y);	
 	
-	float shade = (1.0 - currentDepth);
+	vec4 colorProj = texture2D(u_reflectionTexture, (projectedUV*0.8)+vec2(0.1,0.1));
 
+	float gray = (colorProj.r + colorProj.g + colorProj.b) / 3.0;
+	
+	colorProj = vec4(vec3(gray + 0.7), 1);
+	
+	vec4 diffuse = texture2D(u_diffuseTexture, v_diffuseUV) * colorProj;
+	vec4 finalColor = diffuse;
+	
 	float shadow = 1.0 - shadowComponent(u_ambientTexture, u_lightPosition, v_position.xyz, v_positionLightTrans, vec3(0,0,1));
 
-	finalColor.rgb *= shadow * clamp(pow(shade+0.5, 10), 0,1) * u_diffuseColor;
+	finalColor.rgb *= shadow;
 
-	gl_FragColor = finalColor;
-
+	gl_FragColor = vec4(finalColor.rgb, diffuse.a);
 }

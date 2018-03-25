@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Attribute;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -56,6 +57,8 @@ public class VPuzzleBackgroundRenderable {
     public void render(PerspectiveCamera cam, Environment env){
     	
     	modelBatch.begin(cam);
+      //  volcano.lightDepthTexture.get().unsafeSetWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
+
         if(modelInstance != null){
         	modelBatch.render(modelInstance, env);
         }

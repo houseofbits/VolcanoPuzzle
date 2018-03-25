@@ -64,7 +64,7 @@ public class VStageMain extends InputListener {
 		float buttonIconSize = swidth * 0.08f;
 		
         Pixmap labelColor = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        labelColor.setColor(0.1f, 0.1f, 0.1f, 0.7f);
+        labelColor.setColor(0, 0, 0, 0.8f);
         labelColor.fill();		
 		
         Label.LabelStyle labelStyle = new Label.LabelStyle();

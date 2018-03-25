@@ -49,6 +49,9 @@ public class VPuzzlePieceRenderable {
 	public boolean setTransferToInitialPosition = false;
 	float transferVelocity = 0;
 	
+	float targetY = 0;
+	boolean moveToY = false;
+	
 	public VPuzzlePieceRenderable(VMain v, VVoronoiShapeGenerator.PieceShape shape, Vector2 size){
 		
 		volcano = v;
@@ -109,9 +112,24 @@ public class VPuzzlePieceRenderable {
 	    	if(len <= 0.1f){
 	    		isFinished = true;
 	    		translate(originalPosition);
-	    	}
+	    	}	    
     	}
+    	if(this.moveToY){
+    		float relY = targetY - originalPosition.y;
+    		if(Math.abs(relY) < 0.1f){
+    			originalPosition.y = targetY;
+    			moveToY = false;
+    			translate(originalPosition);
+    		}else{
+    			originalPosition.y += relY * 5 * dt;
+    			translate(originalPosition);
+    		}
+    	}    	
 	}	
+	public void moveToY(float target){
+		moveToY = true;
+		targetY = target;
+	}
     public void render(PerspectiveCamera cam, Environment env){
         modelBatch.begin(cam);
         if(pieceModelInstance != null){

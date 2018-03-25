@@ -56,15 +56,16 @@ float shadowComponent(sampler2D depthMap, vec3 lightPos, vec3 vPos, vec4 vLightS
 	float shadow = 0.0;
 	float texelSize = 1.0 / 500;	//1024.0;
 	vec3 lightDir = vPos - lightPos;
-	float currentDepth = length(lightDir)/300.0;		
+	float currentDepth = length(lightDir)/300.0;			
 	vec3 projCoords = (vLightSpace.xyz / vLightSpace.w)*0.5+0.5;
-	float dotl = dot(normal, normalize(lightDir));
+	if(projCoords.y < 0)return 0;	
+	float dotl = dot(normal, normalize(lightDir));	
 	float bias = (texelSize * dotl) + (texelSize * 4 * currentDepth);  
 	for(int x = -1; x <= 1; ++x){
 	    for(int y = -1; y <= 1; ++y){	
 	        vec4 vdpth = texture2D(depthMap, projCoords.xy + vec2(x, y) * texelSize);
 	        float pcfDepth = decodeFloatRGBA(vdpth);	        
-	        shadow += currentDepth - bias > pcfDepth ? 0.6 : 0.0;        
+	        shadow += currentDepth - bias > pcfDepth ? 0.7 : 0.0;        
 	    }    
 	}	
 	shadow /= 9.0;
@@ -81,7 +82,7 @@ void main() {
 	
 	img = vec4(vec3(gray * 2), 1);
 	
-	vec4 finalColor = mix(img, vec4(0.3,0.3,0.3,1), 0.7);
+	vec4 finalColor = mix(img, vec4(0.5,0.5,0.5,1), 0.7);
 	
 	float shadow = 1.0 - shadowComponent(u_ambientTexture, u_lightPosition, v_position.xyz, v_positionLightTrans, vec3(0,0,1));
 

@@ -15,7 +15,7 @@ public class VStaticAssets {
 		GUI.buttonsSkin.addRegions(new TextureAtlas("gui.txt"));
 	}
 	public static class Text{
-		public static final String selectorTitle = "Saliec kādu no 12 minerālu attēliem. Zemāk vari izvēlēties puzles gabaliņu skaitu."; 	
+		public static final String selectorTitle = "Saliec kādu no 12 minerālu attēliem. \nZemāk vari izvēlēties puzles gabaliņu skaitu."; 	
 		public static final String continueButtonTitle = "Turpināt";
 	}
 	public static class Fonts{

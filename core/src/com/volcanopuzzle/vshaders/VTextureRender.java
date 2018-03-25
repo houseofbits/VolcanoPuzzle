@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.volcanopuzzle.vcore.VMain;
@@ -19,7 +20,8 @@ public class VTextureRender {
 	public VTextureRender(VMain v){
 		volcano = v;
 		fb = new FrameBuffer(Format.RGBA8888, 1024, 1024, true);
-		texture = fb.getColorBufferTexture();			
+		texture = fb.getColorBufferTexture();
+	//	texture.unsafeSetWrap(TextureWrap.ClampToEdge, TextureWrap.ClampToEdge, true);
 	}
 	public void beginRender(){
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());

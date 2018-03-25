@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -46,20 +47,21 @@ public class VMain {
 	public VPuzzleTableRenderable tableRenderable = null;
 	Array<VPuzzlePieceRenderable> puzzlePieces = new Array<VPuzzlePieceRenderable>();
 	public int currentImage = 0;
-	public int imageCount = 7;
+	public final int imageCount = 12;
 
 	public VDefaultShaderProvider depthShader = null;
 	public VShadowShaderProvider puzzlePieceShader = null;
 	public VShadowShaderProvider imageBackgroundPieceShader = null;
 	public VShadowShaderProvider tableShader = null;
+	public VShadowShaderProvider textShader = null;
 
 	public VTextureRender lightDepthTexture;
 
 	private VPuzzlePieceRenderable dragPiece = null;
 	private Vector3 dragOffset = new Vector3();
 	private Vector3 dragIntersection = new Vector3();
-
-	float cameraZoomSteps[] = { 100, 80, 60, 40 };
+	
+	float cameraZoomSteps[] = { 0, 40, 60 };
 	int currentCameraZoomStep = 0;
 
 	public void create() {
@@ -72,9 +74,10 @@ public class VMain {
 		imageBackgroundPieceShader = new VShadowShaderProvider(this, "shaders/img.vertex.glsl",
 				"shaders/img.fragment.glsl");
 		tableShader = new VShadowShaderProvider(this, "shaders/table.vertex.glsl", "shaders/table.fragment.glsl");
+		textShader = new VShadowShaderProvider(this, "shaders/text.vertex.glsl", "shaders/text.fragment.glsl");
 
 		lightDepthTexture = new VTextureRender(this);
-
+        
 		mainStage.create();
 
 		camera = new VCamera(this);
@@ -89,7 +92,7 @@ public class VMain {
 
 		backgroundRenderable = new VPuzzleBackgroundRenderable(this);
 		tableRenderable = new VPuzzleTableRenderable(this);
-
+		
 		createLight();
 
 		generateNewPuzzle(6, 0);
@@ -132,9 +135,8 @@ public class VMain {
 		// VCommon.drawGrid(camera.get());
 
 		tableRenderable.render(camera.get(), environment);
-		//tableRenderable.render(lightView, environment);
-		
 		backgroundRenderable.render(camera.get(), environment);
+		
 		for (int i = 0; i < puzzlePieces.size; i++) {
 			puzzlePieces.get(i).render(camera.get(), environment);
 		}
@@ -152,7 +154,7 @@ public class VMain {
 
 		lightDepthTexture.beginRender();
 
-		Gdx.gl.glClearColor(1, 1, 0, 0.0f);
+		Gdx.gl.glClearColor(1, 1, 1, 1.0f);
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
 		Gdx.gl.glEnable(GL30.GL_DEPTH_TEST);
 
@@ -171,7 +173,6 @@ public class VMain {
 			puzzlePieces.get(i).dispose();
 		}
 		backgroundRenderable.setDiffuseTexture(null, null);
-		tableRenderable.setDiffuseTexture(null, null);
 		puzzlePieces.clear();
 
 		int r = 0;
@@ -183,11 +184,15 @@ public class VMain {
 		currentImage = r;
 
 		Texture texture = getPuzzleTexture(r);
+		Texture textureTitle = getPuzzleTitleTexture(r);
+		Texture textureFooter = getPuzzleFooterTexture(r);
 
-		if (texture == null)
+		if (texture == null || textureTitle == null || textureFooter == null)
 			return;
 
 		texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		textureTitle.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		textureFooter.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);		
 
 		float d = (1.0f / (float) Math.sqrt((float) pieces)) * 0.5f;
 		mainStage.shapeGen.generate(pieces, d);
@@ -202,9 +207,11 @@ public class VMain {
 
 		backgroundRenderable.setDiffuseTexture(null, texture);
 
-		tableRenderable.setDiffuseTexture(null, texture);
-
-		meshBuilder.generateDistributionPoints(mainStage.shapeGen.pieceShapes.size, size, new Vector2(250, 105));
+		tableRenderable.setColorProjectionTexture(texture);
+		tableRenderable.setTitleTexture(textureTitle);
+		tableRenderable.setFooterTexture(textureFooter);
+		
+		meshBuilder.generateDistributionPoints(mainStage.shapeGen.pieceShapes.size, size, new Vector2(250, 115));
 
 		for (int i = 0; i < mainStage.shapeGen.pieceShapes.size; i++) {
 
@@ -225,9 +232,30 @@ public class VMain {
 		camera.setCameraState(PresetsIdentifiers.PUZZLE_VIEW);
 	}
 
+	Texture getPuzzleTitleTexture(int idx) {
+		String filename = "text/title"+idx+".png";
+
+		if (!assetsManager.isLoaded(filename)) {
+			assetsManager.load(filename, Texture.class);
+		}
+		assetsManager.finishLoadingAsset(filename);
+
+		return assetsManager.get(filename, Texture.class);
+	}
+	Texture getPuzzleFooterTexture(int idx) {
+		String filename = "text/foot"+idx+".png";
+
+		if (!assetsManager.isLoaded(filename)) {
+			assetsManager.load(filename, Texture.class);
+		}
+		assetsManager.finishLoadingAsset(filename);
+
+		return assetsManager.get(filename, Texture.class);
+	}	
+	
 	Texture getPuzzleTexture(int idx) {
 
-		String filename = "images/img" + idx + ".png";
+		String filename = "images/" + idx + ".png";
 
 		if (!assetsManager.isLoaded(filename)) {
 			assetsManager.load(filename, Texture.class);
@@ -307,14 +335,22 @@ public class VMain {
 	public void completeZoomIn() {
 		if (currentCameraZoomStep < cameraZoomSteps.length - 1) {
 			currentCameraZoomStep++;
-			camera.setTransitionDistance(cameraZoomSteps[currentCameraZoomStep]);
+			for (int i = 0; i < puzzlePieces.size; i++)puzzlePieces.get(i).moveToY(cameraZoomSteps[currentCameraZoomStep]); 	
+
+			//tableRenderable.moveToY(cameraZoomSteps[currentCameraZoomStep]);
+			
+			//	camera.setTransitionDistance(cameraZoomSteps[currentCameraZoomStep]);
 		}
 	}
 
 	public void completeZoomOut() {
 		if (currentCameraZoomStep > 0) {
 			currentCameraZoomStep--;
-			camera.setTransitionDistance(cameraZoomSteps[currentCameraZoomStep]);
+			for (int i = 0; i < puzzlePieces.size; i++)puzzlePieces.get(i).moveToY(cameraZoomSteps[currentCameraZoomStep]); 				
+
+			//tableRenderable.moveToY(cameraZoomSteps[currentCameraZoomStep]);
+			
+			//	camera.setTransitionDistance(cameraZoomSteps[currentCameraZoomStep]);
 		}
 	}
 }
