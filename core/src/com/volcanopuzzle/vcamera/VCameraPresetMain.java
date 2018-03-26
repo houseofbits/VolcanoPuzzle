@@ -1,7 +1,5 @@
 package com.volcanopuzzle.vcamera;
 
-import com.badlogic.gdx.math.Vector2;
-
 public class VCameraPresetMain extends VCameraPreset {
 	public VCameraPresetMain(VCameraPresetCollection.PresetsIdentifiers identifier){
 		super(identifier);

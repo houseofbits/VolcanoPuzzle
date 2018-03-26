@@ -4,10 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
-import com.badlogic.gdx.graphics.g3d.shaders.DepthShader;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector3;
 import com.volcanopuzzle.vcore.VMain;
 //
 //https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping
@@ -42,6 +40,7 @@ public class VShadowShaderProvider extends DefaultShaderProvider{
 	public void setDepthFunc(int depth){
 		shaderConfig.defaultDepthFunc = depth;		
 	}
+	@SuppressWarnings("static-access")
 	public Shader getShader (Renderable renderable) {
 
 		Shader shader = renderable.shader;		
