@@ -80,7 +80,7 @@ public class VPuzzleTableRenderable {
 	
 	public void setTitleTexture(Texture texture){
 		setModelDiffuseTexture(modelTitleInst, texture);
-		titleSize.y = 36;
+		titleSize.y = 32;
 		float aspect = (float)texture.getWidth() / (float)texture.getHeight();
 		//System.out.println(texture.getWidth()+", "+texture.getHeight()+", "+);
 		titleSize.x = titleSize.y * aspect;
