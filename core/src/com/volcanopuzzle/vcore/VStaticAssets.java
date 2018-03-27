@@ -13,9 +13,10 @@ public class VStaticAssets {
 		Fonts.futuraFont.getData().setLineHeight(25);
 		//TODO Button on/off state images
 		GUI.buttonsSkin.addRegions(new TextureAtlas("gui.txt"));
+		GUI.imageIconsSkin.addRegions(new TextureAtlas("imageIcons.txt"));
 	}
 	public static class Text{
-		public static final String selectorTitle = "Saliec kādu no 12 minerālu attēliem. \nZemāk vari izvēlēties puzles gabaliņu skaitu."; 	
+		public static final String selectorTitle = "Saliec kādu no 12 minerālu attēliem."; 	
 		public static final String continueButtonTitle = "Turpināt";
 	}
 	public static class Fonts{
@@ -26,5 +27,6 @@ public class VStaticAssets {
 	}
 	public static class GUI{
 		public static final Skin buttonsSkin = new Skin();
+		public static final Skin imageIconsSkin = new Skin();
 	}
 }

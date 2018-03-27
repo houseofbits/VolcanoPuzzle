@@ -1,0 +1,89 @@
+imageIcons.png
+size: 382, 1140
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+icon0
+  rotate: false
+  xy: 0, 0
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon1
+  rotate: false
+  xy: 191, 0
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon2
+  rotate: false
+  xy: 0, 190
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon3
+  rotate: false
+  xy: 191, 190
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon4
+  rotate: false
+  xy: 0, 380
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon5
+  rotate: false
+  xy: 191, 380
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon6
+  rotate: false
+  xy: 0, 570
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon7
+  rotate: false
+  xy: 191, 570
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon8
+  rotate: false
+  xy: 0, 760
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon9
+  rotate: false
+  xy: 191, 760
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon10
+  rotate: false
+  xy: 0, 950
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+icon11
+  rotate: false
+  xy: 191, 950
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1

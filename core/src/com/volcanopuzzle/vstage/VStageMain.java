@@ -34,6 +34,7 @@ public class VStageMain extends InputListener {
     ImageButton buttonClose = null;
     float buttonOffset = 10;
     float buttonCloseCenterX = 0;
+    float imageIconSize = 0;
     
     Group groupNext = null;    
     public Table	selectorTable = null;
@@ -56,7 +57,7 @@ public class VStageMain extends InputListener {
 		shapeGen = new VVoronoiShapeGenerator();
 		shapeGen.generate(15, 0.2f);
 		
-//		mainStage.setDebugAll(true);
+		mainStage.setDebugAll(true);
 //		mainStage.setDebugUnderMouse(true);
 		
 		float swidth = mainStage.getWidth();
@@ -82,10 +83,41 @@ public class VStageMain extends InputListener {
         
         selectorTable.add(headerText)
         			.width(selectorTableWidth)
-        			.height(60)
+        			.height(headerText.getPrefHeight())
         			.colspan(difficultyLevels.length)
         			.padTop(30);
         selectorTable.row().padTop(10);
+        
+        
+        Table imageIconTable = new Table();
+        imageIconTable.setWidth(selectorTableWidth);
+
+
+        imageIconSize = (selectorTableWidth/2/4) - 10;
+        		
+        addImageIconTable(imageIconTable, 0);              
+        addImageIconTable(imageIconTable, 1);              
+        addImageIconTable(imageIconTable, 2);              
+        addImageIconTable(imageIconTable, 3);                      
+        imageIconTable.row().padTop(10);
+        addImageIconTable(imageIconTable, 4);              
+        addImageIconTable(imageIconTable, 5);              
+        addImageIconTable(imageIconTable, 6);              
+        addImageIconTable(imageIconTable, 7);                      
+        imageIconTable.row().padTop(10);
+        addImageIconTable(imageIconTable, 8);              
+        addImageIconTable(imageIconTable, 9);              
+        addImageIconTable(imageIconTable, 10);              
+        addImageIconTable(imageIconTable, 11);                      
+        imageIconTable.row().padTop(10);        
+        
+        selectorTable.add(imageIconTable)
+					.width(selectorTableWidth)
+					.height(300)
+					.colspan(difficultyLevels.length)
+					.padTop(30);        
+        selectorTable.row().padTop(10);
+        
         
         for(int n=0; n<difficultyLevels.length; n++){
         	
@@ -168,6 +200,16 @@ public class VStageMain extends InputListener {
         
         currentDifficultyLevelIndex = getSelectedDifficulty();
         setSelectorTableVisibility(false);
+	}
+	
+	private void addImageIconTable(Table table, int id){
+		ImageButton ib = null;        		
+        ib = new ImageButton(VStaticAssets.GUI.imageIconsSkin.getDrawable("icon"+id));
+        ib.setName("ICON"+id);
+        table.add(ib)
+					.width(imageIconSize)
+					.height(imageIconSize)
+					.pad(5);
 	}
 	
 	public void render(){
