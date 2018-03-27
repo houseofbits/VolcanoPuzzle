@@ -285,6 +285,7 @@ public class VMain {
 			VPuzzlePieceRenderable rnd = getPieceAtPoint(x, y, dragIntersection);
 			if (rnd != null) {
 				dragPiece = rnd;
+				dragPiece.onDragStart();
 				dragOffset = dragIntersection.cpy().sub(dragPiece.getTranslation());
 				dragOffset.y = 0;
 			}

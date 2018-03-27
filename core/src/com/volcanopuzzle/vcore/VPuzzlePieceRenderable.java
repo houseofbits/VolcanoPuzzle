@@ -71,6 +71,10 @@ public class VPuzzlePieceRenderable {
         transferVelocity = 0;		
 	}
 	
+	public void onDragStart(){
+		if(setTransferToInitialPosition)setTransferToInitialPosition = false;
+	}
+	
 	public void update(){
 
     	float dt = Gdx.graphics.getDeltaTime();
