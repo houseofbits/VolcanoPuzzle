@@ -17,10 +17,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.volcanopuzzle.vcore.VMain;
 import com.volcanopuzzle.vcore.VStaticAssets;
 import com.volcanopuzzle.vcore.VVoronoiShapeGenerator;
+import com.volcanopuzzle.vstage.VStageSimplePuzzle.PuzzlePiece;
 
 public class VStageMain extends InputListener {
 	
@@ -34,12 +36,13 @@ public class VStageMain extends InputListener {
     ImageButton buttonClose = null;
     float buttonOffset = 10;
     float buttonCloseCenterX = 0;
-    float imageIconSize = 0;
+    float imageIconSize = 100;
+    float imageIconMargin = 10;    
     
     Group groupNext = null;    
     public Table	selectorTable = null;
     
-    int difficultyLevels[] = {6,12,18,30,60,100};    
+    int difficultyLevels[] = {5, 10,20,30,60};    
     int currentDifficultyLevelIndex = 0;
     
     final float selectorTableWidth = 650;
@@ -48,6 +51,16 @@ public class VStageMain extends InputListener {
     
 	public VStageMain(VMain v){
 		volcano = v;
+	}
+	
+	class ImageIcon extends ImageButton{
+		public ImageIcon(Drawable a){
+			super(a);
+		}		
+		public ImageIcon(Drawable a, Drawable b){
+			super(a,b);
+		}
+		public int imageIndex = 0;		
 	}
 	
 	public void create(){
@@ -85,38 +98,35 @@ public class VStageMain extends InputListener {
         			.width(selectorTableWidth)
         			.height(headerText.getPrefHeight())
         			.colspan(difficultyLevels.length)
-        			.padTop(30);
-        selectorTable.row().padTop(10);
+        			.padTop(20);
+        selectorTable.row();
         
         
         Table imageIconTable = new Table();
         imageIconTable.setWidth(selectorTableWidth);
-
-
-        imageIconSize = (selectorTableWidth/2/4) - 10;
         		
         addImageIconTable(imageIconTable, 0);              
         addImageIconTable(imageIconTable, 1);              
         addImageIconTable(imageIconTable, 2);              
         addImageIconTable(imageIconTable, 3);                      
-        imageIconTable.row().padTop(10);
+        imageIconTable.row().padTop(imageIconMargin);
         addImageIconTable(imageIconTable, 4);              
         addImageIconTable(imageIconTable, 5);              
         addImageIconTable(imageIconTable, 6);              
         addImageIconTable(imageIconTable, 7);                      
-        imageIconTable.row().padTop(10);
+        imageIconTable.row().padTop(imageIconMargin);
         addImageIconTable(imageIconTable, 8);              
         addImageIconTable(imageIconTable, 9);              
         addImageIconTable(imageIconTable, 10);              
         addImageIconTable(imageIconTable, 11);                      
-        imageIconTable.row().padTop(10);        
+        imageIconTable.row().padTop(imageIconMargin);        
         
         selectorTable.add(imageIconTable)
 					.width(selectorTableWidth)
-					.height(300)
+					.height(imageIconTable.getPrefHeight())
 					.colspan(difficultyLevels.length)
 					.padTop(30);        
-        selectorTable.row().padTop(10);
+        selectorTable.row();
         
         
         for(int n=0; n<difficultyLevels.length; n++){
@@ -202,14 +212,15 @@ public class VStageMain extends InputListener {
         setSelectorTableVisibility(false);
 	}
 	
-	private void addImageIconTable(Table table, int id){
-		ImageButton ib = null;        		
-        ib = new ImageButton(VStaticAssets.GUI.imageIconsSkin.getDrawable("icon"+id));
+	private void addImageIconTable(Table table, int id){    		
+		ImageIcon ib = new ImageIcon(VStaticAssets.GUI.imageIconsSkin.getDrawable("icon"+id));
         ib.setName("ICON"+id);
+        ib.imageIndex = id;
         table.add(ib)
 					.width(imageIconSize)
 					.height(imageIconSize)
-					.pad(5);
+					.pad(imageIconMargin);
+        ib.addListener(this);    
 	}
 	
 	public void render(){
@@ -319,6 +330,11 @@ public class VStageMain extends InputListener {
 		}	
 		if(a.getName().compareTo("BUTTON_ZOOM_OUT") == 0){
 			volcano.completeZoomOut();
+		}	
+		if(a.getClass() == ImageIcon.class){
+			ImageIcon piece = (ImageIcon)a;	
+			volcano.generateNewPuzzle(getSelectedDifficulty(), piece.imageIndex);
+			setSelectorTableVisibility(false);
 		}			
 	}
     public boolean touchDown (InputEvent e, float x, float y, int pointer, int button) {
