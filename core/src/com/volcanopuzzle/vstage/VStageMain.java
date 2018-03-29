@@ -42,7 +42,7 @@ public class VStageMain extends InputListener {
     Group groupNext = null;    
     public Table	selectorTable = null;
     
-    int difficultyLevels[] = {5, 10,20,30,60};    
+    int difficultyLevels[] = {5, 10,20,30,60};
     int currentDifficultyLevelIndex = 0;
     
     final float selectorTableWidth = 650;
@@ -335,6 +335,8 @@ public class VStageMain extends InputListener {
 			ImageIcon piece = (ImageIcon)a;	
 			volcano.generateNewPuzzle(getSelectedDifficulty(), piece.imageIndex);
 			setSelectorTableVisibility(false);
+			setNextGroupVisibility(false);
+			puzzleComplete = false;			
 		}			
 	}
     public boolean touchDown (InputEvent e, float x, float y, int pointer, int button) {
