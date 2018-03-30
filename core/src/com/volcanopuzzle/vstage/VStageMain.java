@@ -22,7 +22,6 @@ import com.badlogic.gdx.utils.Align;
 import com.volcanopuzzle.vcore.VMain;
 import com.volcanopuzzle.vcore.VStaticAssets;
 import com.volcanopuzzle.vcore.VVoronoiShapeGenerator;
-import com.volcanopuzzle.vstage.VStageSimplePuzzle.PuzzlePiece;
 
 public class VStageMain extends InputListener {
 	
@@ -36,16 +35,19 @@ public class VStageMain extends InputListener {
     ImageButton buttonClose = null;
     float buttonOffset = 10;
     float buttonCloseCenterX = 0;
-    float imageIconSize = 100;
-    float imageIconMargin = 10;    
+    float imageIconSize = 115;
+    float imageIconMargin = 5;
+    float checkboxWidth = 170;    
+    float selectorTableWidth = 650;
+    float buttonIconSize = 50;
+    float titleMarginTop = 50;
+    float titleMarginBottom = 50;
     
     Group groupNext = null;    
     public Table	selectorTable = null;
     
-    int difficultyLevels[] = {5, 10,20,30,60};
+    int difficultyLevels[] = {10,25,40};
     int currentDifficultyLevelIndex = 0;
-    
-    final float selectorTableWidth = 650;
     
     boolean puzzleComplete = false;
     
@@ -70,13 +72,22 @@ public class VStageMain extends InputListener {
 		shapeGen = new VVoronoiShapeGenerator();
 		shapeGen.generate(15, 0.2f);
 		
-		mainStage.setDebugAll(true);
+//		mainStage.setDebugAll(true);
 //		mainStage.setDebugUnderMouse(true);
 		
 		float swidth = mainStage.getWidth();
 		float sheight = mainStage.getHeight();
-		float buttonIconSize = swidth * 0.08f;
 		
+		buttonIconSize = swidth * 0.08f;		
+		buttonOffset = swidth * 0.005f;
+	    imageIconSize = swidth * 0.11f;
+	    imageIconMargin = swidth * 0.005f;
+	    checkboxWidth = swidth * 0.17f;
+	    selectorTableWidth = swidth * 0.55f;
+	    titleMarginTop = swidth * 0.03f;
+	    titleMarginBottom = swidth * 0.01f;
+		buttonCloseCenterX = (swidth / 2) - (buttonIconSize/2);
+	    
         Pixmap labelColor = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         labelColor.setColor(0, 0, 0, 0.8f);
         labelColor.fill();		
@@ -98,7 +109,8 @@ public class VStageMain extends InputListener {
         			.width(selectorTableWidth)
         			.height(headerText.getPrefHeight())
         			.colspan(difficultyLevels.length)
-        			.padTop(20);
+        			.padTop(titleMarginTop)
+        			.padBottom(titleMarginBottom);
         selectorTable.row();
         
         
@@ -124,24 +136,18 @@ public class VStageMain extends InputListener {
         selectorTable.add(imageIconTable)
 					.width(selectorTableWidth)
 					.height(imageIconTable.getPrefHeight())
-					.colspan(difficultyLevels.length)
-					.padTop(30);        
+					.colspan(difficultyLevels.length);        
         selectorTable.row();
-        
         
         for(int n=0; n<difficultyLevels.length; n++){
         	
         	Group g = new Group();
-            ImageButton imgb = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("checkBoxOff"), 
-            									VStaticAssets.GUI.buttonsSkin.getDrawable("checkBoxOn"),
-            									VStaticAssets.GUI.buttonsSkin.getDrawable("checkBoxCheck"));
-            imgb.setSize(buttonIconSize, buttonIconSize);    	
-        	Label l = new Label(difficultyLevels[n]+" gabaliņi", labelStyle);
-        	l.setPosition(0, -10);
-        	l.setAlignment(Align.center);
-        	l.setWidth(buttonIconSize);
+            ImageButton imgb = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable(difficultyLevels[n]+"off"), 
+            									VStaticAssets.GUI.buttonsSkin.getDrawable(difficultyLevels[n]+"over"),
+            									VStaticAssets.GUI.buttonsSkin.getDrawable(difficultyLevels[n]+"on"));
+            float scale = imgb.getWidth() / imgb.getHeight();
+            imgb.setSize(checkboxWidth, checkboxWidth / scale);    	
         	g.addActor(imgb);
-            g.addActor(l);
             g.setName("BUTTON_DIFF"+n);
             g.addListener(this);  
             g.setWidth(imgb.getWidth());
@@ -160,23 +166,22 @@ public class VStageMain extends InputListener {
         mainStage.addActor(selectorTable);
         
         
-        buttonMain = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-main-light-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-main-light"));
+        buttonMain = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-main-light"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-main-light-on"));
         buttonMain.setSize(buttonIconSize, buttonIconSize);          
         buttonMain.setName("BUTTON_MAIN");
         buttonMain.setPosition(buttonOffset, buttonOffset);
         buttonMain.addListener(this);          
         mainStage.addActor(buttonMain);
                         
-        buttonClose = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-close-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-close"));
+        buttonClose = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-close"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-close-on"));
         buttonClose.setSize(buttonIconSize, buttonIconSize);          
         buttonClose.setName("BUTTON_CLOSE");
         buttonClose.setPosition(buttonOffset, buttonOffset);
-        buttonClose.addListener(this);
-        buttonCloseCenterX = (swidth / 2) - (buttonIconSize/2);
+        buttonClose.addListener(this);        
         mainStage.addActor(buttonClose);
         
         groupNext = new Group();
-        ImageButton buttonNext = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-next-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-next"));
+        ImageButton buttonNext = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-next"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-next-on"));
         buttonNext.setSize(buttonIconSize, buttonIconSize);          
         buttonNext.setName("BUTTON_NEXT");
         buttonNext.setPosition(swidth - buttonIconSize - buttonOffset, buttonOffset);
@@ -189,14 +194,14 @@ public class VStageMain extends InputListener {
         labelButtonNext.setPosition(labelx, labely);        
         groupNext.addActor(labelButtonNext);
         
-        ImageButton buttonZoomIn = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomin-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomin"));
+        ImageButton buttonZoomIn = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomin"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomin-on"));
         buttonZoomIn.setSize(buttonIconSize, buttonIconSize);          
         buttonZoomIn.setName("BUTTON_ZOOM_IN");
         buttonZoomIn.setPosition(swidth - buttonIconSize - buttonOffset, sheight - buttonIconSize - buttonOffset);
         buttonZoomIn.addListener(this); 
         groupNext.addActor(buttonZoomIn);
         
-        ImageButton buttonZoomOut = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomout-on"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomout"));
+        ImageButton buttonZoomOut = new ImageButton(VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomout"), VStaticAssets.GUI.buttonsSkin.getDrawable("button-zoomout-on"));
         buttonZoomOut.setSize(buttonIconSize, buttonIconSize);          
         buttonZoomOut.setName("BUTTON_ZOOM_OUT");
         buttonZoomOut.setPosition(buttonOffset, sheight - buttonIconSize - buttonOffset);
@@ -213,7 +218,8 @@ public class VStageMain extends InputListener {
 	}
 	
 	private void addImageIconTable(Table table, int id){    		
-		ImageIcon ib = new ImageIcon(VStaticAssets.GUI.imageIconsSkin.getDrawable("icon"+id));
+		ImageIcon ib = new ImageIcon(VStaticAssets.GUI.imageIconsSkin.getDrawable("icon"+id),
+									VStaticAssets.GUI.imageIconsSkin.getDrawable("iconOn"+id));
         ib.setName("ICON"+id);
         ib.imageIndex = id;
         table.add(ib)

@@ -1,96 +1,138 @@
 gui.png
-size: 944, 282
+size: 951, 549
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+10off
+  rotate: false
+  xy: 0, 0
+  size: 317, 89
+  orig: 317, 89
+  offset: 0, 0
+  index: -1
+10on
+  rotate: false
+  xy: 317, 0
+  size: 317, 89
+  orig: 317, 89
+  offset: 0, 0
+  index: -1
+10over
+  rotate: false
+  xy: 634, 0
+  size: 317, 89
+  orig: 317, 89
+  offset: 0, 0
+  index: -1
+25off
+  rotate: false
+  xy: 0, 89
+  size: 317, 89
+  orig: 317, 89
+  offset: 0, 0
+  index: -1
+25on
+  rotate: false
+  xy: 317, 89
+  size: 317, 89
+  orig: 317, 89
+  offset: 0, 0
+  index: -1
+25over
+  rotate: false
+  xy: 634, 89
+  size: 317, 89
+  orig: 317, 89
+  offset: 0, 0
+  index: -1
+40off
+  rotate: false
+  xy: 0, 178
+  size: 317, 89
+  orig: 317, 89
+  offset: 0, 0
+  index: -1
+40on
+  rotate: false
+  xy: 317, 178
+  size: 317, 89
+  orig: 317, 89
+  offset: 0, 0
+  index: -1
+40over
+  rotate: false
+  xy: 634, 178
+  size: 317, 89
+  orig: 317, 89
+  offset: 0, 0
+  index: -1
 button-close-on
   rotate: false
-  xy: 140, 141
+  xy: 0, 267
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-close
   rotate: false
-  xy: 0, 141
+  xy: 140, 267
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-main-light-on
   rotate: false
-  xy: 280, 141
+  xy: 280, 267
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-main-light
   rotate: false
-  xy: 700, 141
+  xy: 420, 267
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-next-on
   rotate: false
-  xy: 420, 141
+  xy: 560, 267
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-next
   rotate: false
-  xy: 560, 141
+  xy: 700, 267
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-zoomin-on
   rotate: false
-  xy: 804, 0
+  xy: 0, 408
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-zoomin
   rotate: false
-  xy: 664, 0
+  xy: 140, 408
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-zoomout-on
   rotate: false
-  xy: 384, 0
+  xy: 280, 408
   size: 140, 141
   orig: 140, 141
   offset: 0, 0
   index: -1
 button-zoomout
   rotate: false
-  xy: 524, 0
+  xy: 420, 408
   size: 140, 141
   orig: 140, 141
-  offset: 0, 0
-  index: -1
-checkBoxCheck
-  rotate: false
-  xy: 128, 0
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: -1
-checkBoxOff
-  rotate: false
-  xy: 0, 0
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: -1
-checkBoxOn
-  rotate: false
-  xy: 256, 0
-  size: 128, 128
-  orig: 128, 128
   offset: 0, 0
   index: -1

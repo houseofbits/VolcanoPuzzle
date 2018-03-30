@@ -89,7 +89,7 @@ public class VMain {
 		
 		createLight();
 
-		generateNewPuzzle(6, 0);
+		generateNewPuzzle(25, 0);
 	}
 
 	public void createLight() {

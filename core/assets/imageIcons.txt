@@ -1,5 +1,5 @@
 imageIcons.png
-size: 382, 1140
+size: 955, 950
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
@@ -19,70 +19,154 @@ icon1
   index: -1
 icon2
   rotate: false
-  xy: 0, 190
+  xy: 382, 0
   size: 191, 190
   orig: 191, 190
   offset: 0, 0
   index: -1
 icon3
   rotate: false
-  xy: 191, 190
+  xy: 573, 0
   size: 191, 190
   orig: 191, 190
   offset: 0, 0
   index: -1
 icon4
   rotate: false
-  xy: 0, 380
+  xy: 764, 0
   size: 191, 190
   orig: 191, 190
   offset: 0, 0
   index: -1
 icon5
   rotate: false
-  xy: 191, 380
+  xy: 0, 190
   size: 191, 190
   orig: 191, 190
   offset: 0, 0
   index: -1
 icon6
   rotate: false
-  xy: 0, 570
+  xy: 191, 190
   size: 191, 190
   orig: 191, 190
   offset: 0, 0
   index: -1
 icon7
   rotate: false
-  xy: 191, 570
+  xy: 382, 190
   size: 191, 190
   orig: 191, 190
   offset: 0, 0
   index: -1
 icon8
   rotate: false
-  xy: 0, 760
+  xy: 573, 190
   size: 191, 190
   orig: 191, 190
   offset: 0, 0
   index: -1
 icon9
   rotate: false
-  xy: 191, 760
+  xy: 764, 190
   size: 191, 190
   orig: 191, 190
   offset: 0, 0
   index: -1
 icon10
   rotate: false
-  xy: 0, 950
+  xy: 0, 380
   size: 191, 190
   orig: 191, 190
   offset: 0, 0
   index: -1
 icon11
   rotate: false
-  xy: 191, 950
+  xy: 191, 380
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn0
+  rotate: false
+  xy: 382, 380
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn1
+  rotate: false
+  xy: 573, 380
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn2
+  rotate: false
+  xy: 764, 380
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn3
+  rotate: false
+  xy: 0, 570
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn4
+  rotate: false
+  xy: 191, 570
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn5
+  rotate: false
+  xy: 382, 570
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn6
+  rotate: false
+  xy: 573, 570
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn7
+  rotate: false
+  xy: 764, 570
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn8
+  rotate: false
+  xy: 0, 760
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn9
+  rotate: false
+  xy: 191, 760
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn10
+  rotate: false
+  xy: 382, 760
+  size: 191, 190
+  orig: 191, 190
+  offset: 0, 0
+  index: -1
+iconOn11
+  rotate: false
+  xy: 573, 760
   size: 191, 190
   orig: 191, 190
   offset: 0, 0
