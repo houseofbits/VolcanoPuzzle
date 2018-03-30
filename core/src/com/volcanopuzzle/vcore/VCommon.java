@@ -11,6 +11,10 @@ public class VCommon {
 	
 	static SpriteBatch spriteBatch = new SpriteBatch();
 	
+	public static void log(String text){
+		System.out.println(text);
+	}
+	
 	public static float angleCircleDistance(float a, float b){
 		float diff = b - a;
         while (diff < -180) diff += 360;
