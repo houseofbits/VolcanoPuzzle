@@ -4,7 +4,11 @@ import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
 import java.util.Calendar;
+import java.util.List;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.volcanopuzzle.vcore.VMain;
 
@@ -37,7 +41,15 @@ public class VolcanoPuzzle extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		main.render();
+		main.render();		
+		/*
+		ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+		System.out.println("Heap " + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage());
+		//log("NonHeap", ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage());
+		List<MemoryPoolMXBean> beans = ManagementFactory.getMemoryPoolMXBeans();
+		for (MemoryPoolMXBean bean: beans) {
+		//    log(bean.getName(), bean.getUsage());
+		}*/		
 	}
 	
 	@Override
