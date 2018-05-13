@@ -21,7 +21,7 @@ public class VolcanoPuzzle extends ApplicationAdapter {
 	@Override
 	public void create () {
 		
-		/**
+		/**/
 		Calendar cal = Calendar.getInstance();
 		int year = cal.get(Calendar.YEAR);
 		int month = cal.get(Calendar.MONTH);

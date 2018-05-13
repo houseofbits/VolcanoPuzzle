@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.volcanopuzzle.vcamera.VCamera;
 import com.volcanopuzzle.vcamera.VCameraPresetCollection.PresetsIdentifiers;
 import com.volcanopuzzle.vshaders.VDefaultShaderProvider;
@@ -51,13 +52,19 @@ public class VMain {
 
 	public VTextureRender lightDepthTexture;
 
-	private VPuzzlePieceRenderable dragPiece = null;
+	public VPuzzlePieceRenderable dragPiece = null;
 	private Vector3 dragOffset = new Vector3();
 	private Vector3 dragIntersection = new Vector3();
 	
 	float cameraZoomSteps[] = { 0, 40, 60 };
 	int currentCameraZoomStep = 0;
 
+    public float userActionActiveDelay = 50;
+    protected boolean userActionActive = false;
+    private Timer.Task userActionActiveCountdown = null;	
+	
+    public VDemoPlay demoPlayer = new VDemoPlay(this);
+    
 	public void create() {
 		VStaticAssets.Init();
 		inputProcessor = new VInputProcessor(this);
@@ -119,6 +126,8 @@ public class VMain {
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT | GL30.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glEnable(GL30.GL_DEPTH_TEST);
 
+		demoPlayer.update();
+		
 		camera.update();
 		for (int i = 0; i < puzzlePieces.size; i++) {
 			puzzlePieces.get(i).update();
@@ -294,13 +303,18 @@ public class VMain {
 
 	public void onTouchUp(int x, int y) {
 		dragPiece = null;
+		
+		setUserActionActive();
 	}
 
 	public void onTap(float x, float y, int count, int button) {
-
+		setUserActionActive();
 	}
 
 	public void onDrag(int x, int y) {
+		
+		setUserActionActive();
+		
 		if (gameState == GameStates.PUZZLE && !mainStage.isLocked()) {
 			if (dragPiece != null) {
 				if (dragPiece.isGrabbed) {
@@ -348,4 +362,19 @@ public class VMain {
 			//	camera.setTransitionDistance(cameraZoomSteps[currentCameraZoomStep]);
 		}
 	}
+    public void setUserActionActive(){
+    	
+    	userActionActive = true;
+
+    	if(userActionActiveCountdown != null)userActionActiveCountdown.cancel();
+    	
+    	userActionActiveCountdown = Timer.schedule(new Timer.Task() {
+	        @Override
+	        public void run(){
+	        	onUserActionLost();
+	        }}, userActionActiveDelay);
+    }	
+    public void onUserActionLost(){
+    	
+    }
 }
