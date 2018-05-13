@@ -59,7 +59,7 @@ public class VMain {
 	float cameraZoomSteps[] = { 0, 40, 60 };
 	int currentCameraZoomStep = 0;
 
-    public float userActionActiveDelay = 50;
+    public float userActionActiveDelay = VConfig.get().userActionActiveTimeout;
     protected boolean userActionActive = false;
     private Timer.Task userActionActiveCountdown = null;	
 	
@@ -96,7 +96,9 @@ public class VMain {
 		
 		createLight();
 
-		generateNewPuzzle(25, 0);
+		generateNewPuzzle(10, 0);
+		
+		setUserActionActive();
 	}
 
 	public void createLight() {
@@ -290,6 +292,9 @@ public class VMain {
 	}
 
 	public void onTouchDown(int x, int y) {
+		
+		setUserActionActive();
+		
 		if (gameState == GameStates.PUZZLE && !mainStage.isLocked()) {
 			VPuzzlePieceRenderable rnd = getPieceAtPoint(x, y, dragIntersection);
 			if (rnd != null) {
@@ -302,9 +307,10 @@ public class VMain {
 	}
 
 	public void onTouchUp(int x, int y) {
-		dragPiece = null;
 		
 		setUserActionActive();
+		
+		dragPiece = null;
 	}
 
 	public void onTap(float x, float y, int count, int button) {
@@ -366,6 +372,8 @@ public class VMain {
     	
     	userActionActive = true;
 
+    	demoPlayer.stopDemo();
+    	
     	if(userActionActiveCountdown != null)userActionActiveCountdown.cancel();
     	
     	userActionActiveCountdown = Timer.schedule(new Timer.Task() {
@@ -375,6 +383,6 @@ public class VMain {
 	        }}, userActionActiveDelay);
     }	
     public void onUserActionLost(){
-    	
+    	demoPlayer.startDemo();
     }
 }

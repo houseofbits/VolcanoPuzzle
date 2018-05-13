@@ -49,7 +49,7 @@ public class VStageMain extends InputListener {
     int difficultyLevels[] = {10,25,40};
     int currentDifficultyLevelIndex = 0;
     
-    boolean puzzleComplete = false;
+    public boolean puzzleComplete = false;
     
 	public VStageMain(VMain v){
 		volcano = v;
