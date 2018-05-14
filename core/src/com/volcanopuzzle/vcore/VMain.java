@@ -21,6 +21,7 @@ import com.volcanopuzzle.vcamera.VCameraPresetCollection.PresetsIdentifiers;
 import com.volcanopuzzle.vshaders.VDefaultShaderProvider;
 import com.volcanopuzzle.vshaders.VShadowShaderProvider;
 import com.volcanopuzzle.vshaders.VTextureRender;
+import com.volcanopuzzle.vstage.VInitMainScreen;
 import com.volcanopuzzle.vstage.VStageMain;
 
 public class VMain {
@@ -66,6 +67,7 @@ public class VMain {
     public VDemoPlay demoPlayer = new VDemoPlay(this);
     
 	public void create() {
+
 		VStaticAssets.Init();
 		inputProcessor = new VInputProcessor(this);
 
